@@ -66,4 +66,9 @@ class User extends Authenticatable
             ]);
         });
     }
+
+    public function cosplayer()
+    {
+        return $this->hasOne(Cosplayer::class); // Adjust as per your relationship
+    }
 }

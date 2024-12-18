@@ -29,6 +29,9 @@ class HomeController extends Controller
 
     //     return view('index', compact('cosplayers'));
     // }
-
+    public function dashboard()
+    {
+        return view('backend.dashboard');
+    }
 
 }

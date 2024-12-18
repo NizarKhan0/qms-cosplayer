@@ -30,6 +30,7 @@
     <!-- BEGIN: Custom CSS-->
     <link rel="stylesheet" type="text/css" href="{{ asset('template/assets/app-assets/css/custom/custom.css') }}">
     <!-- END: Custom CSS-->
+
     @livewireStyles
 </head>
 <!-- END: Head-->
@@ -53,6 +54,7 @@
     <div id="main">
         <div class="row">
             <div class="col s12">
+
                 <div class="container">
                     @yield('content')
                 </div>
