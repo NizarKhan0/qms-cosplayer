@@ -11,6 +11,7 @@
     <meta name="keywords"
         content="materialize, admin template, dashboard template, flat admin template, responsive admin template, eCommerce dashboard, analytic dashboard">
     <meta name="author" content="ThemeSelect">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{{ config('title', 'Cosplayer') }} - @yield('title')</title>
     <link rel="apple-touch-icon"
         href="{{ asset('template/assets/app-assets/images/favicon/apple-touch-icon-152x152.png') }}">
@@ -49,11 +50,13 @@
             }
 
             table.display.responsive-table thead th.cosplayer-name {
-                display: none; /* Hide Cosplayer Name header */
+                display: none;
+                /* Hide Cosplayer Name header */
             }
 
             table.display.responsive-table tbody td.cosplayer-name {
-                display: none; /* Hide Cosplayer Name column */
+                display: none;
+                /* Hide Cosplayer Name column */
             }
 
             table.display.responsive-table thead {
@@ -68,23 +71,27 @@
 
             table.display.responsive-table td {
                 display: block;
-                text-align: center; /* Center text in each cell */
+                text-align: center;
+                /* Center text in each cell */
                 font-size: 14px;
                 position: relative;
                 padding: 10px;
                 border-bottom: 1px dotted #ccc;
-                margin: auto; /* Center items horizontally */
+                margin: auto;
+                /* Center items horizontally */
             }
 
             table.display.responsive-table td::before {
                 content: attr(data-label);
                 position: absolute;
-                left: 50%; /* Adjust label positioning */
+                left: 50%;
+                /* Adjust label positioning */
                 transform: translateX(-50%);
                 top: 10px;
                 white-space: nowrap;
                 font-weight: bold;
-                text-align: center; /* Center label text */
+                text-align: center;
+                /* Center label text */
             }
         }
     </style>
@@ -131,9 +138,8 @@
     <!-- BEGIN: Footer-->
     <footer class="page-footer footer footer-static footer-light navbar-border navbar-shadow">
         <div class="footer-copyright">
-            <div class="container"><span>&copy; 2024 <a href="https://nizar-khan.com/"
-                        target="_blank">Nizar Khan</a> All rights reserved.</span><span
-                    class="right hide-on-small-only">Design and Developed by <a
+            <div class="container"><span>&copy; 2024 <a href="https://nizar-khan.com/" target="_blank">Nizar Khan</a>
+                    All rights reserved.</span><span class="right hide-on-small-only">Design and Developed by <a
                         href="https://nizar-khan.com/">Nizar Khan</a></span></div>
         </div>
     </footer>

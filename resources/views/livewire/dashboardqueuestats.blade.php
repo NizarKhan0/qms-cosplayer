@@ -4,6 +4,7 @@ use Livewire\Volt\Component;
 use App\Models\FanQueue;
 
 new class extends Component {
+    public $cosplayerId;
     public $pendingQueue;
     public $callInQueue;
     public $completedQueue;
@@ -11,6 +12,7 @@ new class extends Component {
     // Initialize the data when the component is mounted
     public function mount()
     {
+        $this->cosplayerId = auth()->user()->id;
         $this->updateQueueInfo();
     }
 
@@ -20,12 +22,21 @@ new class extends Component {
         $this->updateQueueInfo();
     }
 
-    // Method to fetch and update the queue information
+    // Method to fetch and update the queue information based on cosplayer_id
     public function updateQueueInfo()
     {
-        $this->pendingQueue = FanQueue::where('status', 'Pending')->count();
-        $this->callInQueue = FanQueue::where('status', 'Queue Now')->count();
-        $this->completedQueue = FanQueue::where('status', 'Complete')->count();
+        // Fetch queue counts based on cosplayer_id
+        $this->pendingQueue = FanQueue::where('cosplayer_id', $this->cosplayerId)
+            ->where('status', 'pending')
+            ->count();
+
+        $this->callInQueue = FanQueue::where('cosplayer_id', $this->cosplayerId)
+            ->where('status', 'queue now')
+            ->count();
+
+        $this->completedQueue = FanQueue::where('cosplayer_id', $this->cosplayerId)
+            ->where('status', 'complete')
+            ->count();
     }
 };?>
 

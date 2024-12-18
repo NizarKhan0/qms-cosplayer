@@ -1,6 +1,7 @@
 <div>
     <div wire:poll="reloadFans">
         <form wire:submit="registerQueue">
+            @csrf
             <div class="row">
                 {{-- <div class="input-field col s12">
                         <h5 class="ml-4">Total {{ $queue_number}} queue number</h5>
@@ -29,7 +30,8 @@
             <div class="row margin">
                 <div class="input-field col s12">
                     <i class="pt-2 material-icons prefix">person_outline</i>
-                    <input wire:model="name" id="name" type="text" class="validate" name="name" placeholder="e.g. Nizar">
+                    <input wire:model="name" id="name" type="text" class="validate" name="name"
+                        placeholder="e.g. Nizar">
                     <label for="name">Name</label>
                     @error('name')
                         <span class="helper-text" data-error="{{ $message }}">{{ $message }}</span>
@@ -41,7 +43,8 @@
             <div class="row margin">
                 <div class="input-field col s12">
                     <i class="pt-2 material-icons prefix">phone</i>
-                    <input wire:model="phone" id="phone" type="tel" class="validate" name="phone" placeholder="e.g. 0187898521">
+                    <input wire:model="phone" id="phone" type="tel" class="validate" name="phone"
+                        placeholder="e.g. 0187898521">
                     <label for="phone">Number Phone</label>
                     @error('phone')
                         <span class="helper-text" data-error="{{ $message }}">{{ $message }}</span>

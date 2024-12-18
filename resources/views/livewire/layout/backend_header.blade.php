@@ -26,9 +26,9 @@ new class extends Component
                     <ul class="navbar-list right">
                         <li class="hide-on-med-and-down"><a class="waves-effect waves-block waves-light toggle-fullscreen"
                                 href="javascript:void(0);"><i class="material-icons">settings_overscan</i></a></li>
-                        <li class="hide-on-large-only search-input-wrapper"><a
+                        {{-- <li class="hide-on-large-only search-input-wrapper"><a
                                 class="waves-effect waves-block waves-light search-button" href="javascript:void(0);"><i
-                                    class="material-icons">search</i></a></li>
+                                    class="material-icons">search</i></a></li> --}}
                         {{-- <li><a class="waves-effect waves-block waves-light profile-button" href="javascript:void(0);"
                                 data-target="profile-dropdown"><span class="avatar-status avatar-online"><img
                                         src="{{ asset('template/assets/app-assets/images/avatar/avatar-7.png') }}"

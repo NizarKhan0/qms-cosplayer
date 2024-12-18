@@ -31,7 +31,11 @@ class HomeController extends Controller
     // }
     public function dashboard()
     {
-        return view('backend.dashboard');
+        $cosplayers = Cosplayer::whereHas('user', function ($query) {
+            $query->where('role_id', 3);
+        })->get();
+
+        return view('backend.dashboard', compact('cosplayers'));
     }
 
 }

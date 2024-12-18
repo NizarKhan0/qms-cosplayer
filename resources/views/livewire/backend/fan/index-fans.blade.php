@@ -42,11 +42,11 @@ new class extends Component {
         // Check if the logged-in user has role_id = 1
         if (Auth::user()->role_id === 1) {
             // If role_id = 1, show all fan queues for all cosplayers
-            return $query->paginate(10);
+            return $query->paginate(8);
         } else {
             // If role_id is not 1, show only the fan queues for the logged-in cosplayer
             $cosplayerId = Auth::user()->id; // Get the cosplayer ID associated with the logged-in user
-            return $query->where('cosplayer_id', $cosplayerId)->paginate(10);
+            return $query->where('cosplayer_id', $cosplayerId)->paginate(8);
         }
     }
 

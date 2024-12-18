@@ -97,8 +97,14 @@ class CreateFans extends Component
         // Set the queue number to display to the user
         $this->queue_number = $queueNumber;
 
+        // Flash success message for Livewire to pick up
+        // session()->flash('success', 'You have successfully joined the queue. Your queue number is ' . $queueNumber);
+
+
         // Redirect with success message
-        return redirect('/')->with('success', 'You have successfully joined the queue. Your queue number is ' . $queueNumber);
+        // return redirect('/');
+   // Redirect to home page with success message using `with()`
+   return redirect()->route('home')->with('success', 'You have successfully joined the queue. Your queue number is ' . $queueNumber);
     }
 
     public function render()
