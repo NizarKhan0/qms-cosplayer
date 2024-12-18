@@ -82,8 +82,7 @@ new class extends Component {
         <div class="col s12">
             <!-- New Search Input -->
             <div class="input-field">
-                <input type="text" wire:model.live="search" placeholder="Search by Name, Queue Number, or Status"
-                    class="validate">
+                <input type="text" wire:model.live="search" placeholder="Search by Name, Queue Number, or Status" class="validate">
             </div>
             <div class="card">
                 <div class="card-content">
@@ -92,60 +91,55 @@ new class extends Component {
                             @php
                                 $fanQueues = $this->getFanQueues();
                             @endphp
-                            <table id="myTable" class="display">
-                                <thead>
-                                    <tr>
-                                        <th>Name</th>
-                                        <th>Phone</th>
-                                        <th>Queue Number</th>
-                                        <th>Status</th>
-                                        <th>Cosplayer Name</th>
-                                        <th>Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach ($fanQueues as $fan)
+                            <div class="responsive-table-wrapper">
+                                <table id="myTable" class="display responsive-table">
+                                    <thead>
                                         <tr>
-                                            <td>{{ $fan->fan->name }}</td>
-                                            <td>
-                                                <a href="https://wa.me/{{ preg_replace('/\D/', '', $fan->fan->phone) }}"
-                                                    target="_blank">
-                                                    {{ $fan->fan->phone }}
-                                                </a>
-                                            </td>
-                                            <td>{{ $fan->queue_number }}</td>
-                                            <td>
-                                                @if ($fan->status === 'Queue Now')
-                                                    <span class="chip blue white-text">Queue Now</span>
-                                                @elseif ($fan->status === 'Complete')
-                                                    <span class="chip green white-text">Complete</span>
-                                                @else
-                                                    <span class="chip red white-text">Pending</span>
-                                                @endif
-                                            </td>
-                                            <td>{{ $fan->cosplayer->cosplayer_name }}</td>
-                                            <td>
-                                                <select
-                                                    wire:change="updateStatus({{ $fan->id }}, $event.target.value)"
-                                                    class="browser-default">
-                                                    <option value="" disabled selected>Change Status</option>
-                                                    <option value="Queue Now"
-                                                        {{ $fan->status === 'Queue Now' ? 'selected' : '' }}>
-                                                        Queue Now
-                                                    </option>
-                                                    <option value="Complete"
-                                                        {{ $fan->status === 'Complete' ? 'selected' : '' }}>
-                                                        Complete
-                                                    </option>
-                                                    <option value="Pending"
-                                                        {{ $fan->status === 'Pending' ? 'selected' : '' }}>Pending
-                                                    </option>
-                                                </select>
-                                            </td>
+                                            <th>Name</th>
+                                            <th>Phone</th>
+                                            <th>Queue Number</th>
+                                            <th>Status</th>
+                                            <th class="cosplayer-name">Cosplayer Name</th> <!-- Add class -->
+                                            <th>Action</th>
                                         </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
+                                    </thead>
+                                    <tbody>
+                                        @foreach ($fanQueues as $fan)
+                                            <tr>
+                                                <td>{{ $fan->fan->name }}</td>
+                                                <td>
+                                                    <a href="https://wa.me/{{ preg_replace('/\D/', '', $fan->fan->phone) }}" target="_blank">
+                                                        {{ $fan->fan->phone }}
+                                                    </a>
+                                                </td>
+                                                <td>{{ $fan->queue_number }}</td>
+                                                <td>
+                                                    @if ($fan->status === 'Queue Now')
+                                                        <span class="chip blue white-text">Queue Now</span>
+                                                    @elseif ($fan->status === 'Complete')
+                                                        <span class="chip green white-text">Complete</span>
+                                                    @else
+                                                        <span class="chip red white-text">Pending</span>
+                                                    @endif
+                                                </td>
+                                                <td class="cosplayer-name">{{ $fan->cosplayer->cosplayer_name }}</td> <!-- Add class -->
+                                                <td>
+                                                    <select wire:change="updateStatus({{ $fan->id }}, $event.target.value)" class="browser-default">
+                                                        <option value="" disabled selected>Change Status</option>
+                                                        <option value="Queue Now" {{ $fan->status === 'Queue Now' ? 'selected' : '' }}>
+                                                            Queue Now
+                                                        </option>
+                                                        <option value="Complete" {{ $fan->status === 'Complete' ? 'selected' : '' }}>
+                                                            Complete
+                                                        </option>
+                                                        <option value="Pending" {{ $fan->status === 'Pending' ? 'selected' : '' }}>Pending</option>
+                                                    </select>
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
 
                             <!-- Pagination Links -->
                             <div class="pagination center-align">
@@ -183,3 +177,4 @@ new class extends Component {
         </div>
     </div>
 </div>
+

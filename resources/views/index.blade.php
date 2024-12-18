@@ -20,10 +20,14 @@
 
     <!-- Credit Link at the top right -->
     <div class="absolute top-0 right-0 m-4">
-        <a href="https://nizar-khan.com" target="_blank"
-            class="px-4 py-2 text-sm text-black bg-green-500 rounded-md hover:bg-green-600">
+        {{-- <a href="https://nizar-khan.com" target="_blank"
+            class="px-4 py-2 text-sm text-white bg-purple-500 rounded-md hover:bg-purple-600">
             Developed by: Nizar Khan
-        </a>
+        </a> --}}
+        <a href="https://nizar-khan.com" target="_blank"
+        class="px-4 py-2 text-sm text-white bg-black rounded-md">
+        Developed by: Nizar Khan
+    </a>
     </div>
 
 

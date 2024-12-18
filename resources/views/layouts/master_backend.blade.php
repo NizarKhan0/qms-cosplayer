@@ -31,6 +31,65 @@
     <link rel="stylesheet" type="text/css" href="{{ asset('template/assets/app-assets/css/custom/custom.css') }}">
     <!-- END: Custom CSS-->
 
+    {{-- ini untuk custom table list fan bagi responsive mobile & tablet dan hide item --}}
+    <style>
+        .responsive-table-wrapper {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        table.display.responsive-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        @media screen and (max-width: 768px) {
+            table.display.responsive-table {
+                text-align: center;
+            }
+
+            table.display.responsive-table thead th.cosplayer-name {
+                display: none; /* Hide Cosplayer Name header */
+            }
+
+            table.display.responsive-table tbody td.cosplayer-name {
+                display: none; /* Hide Cosplayer Name column */
+            }
+
+            table.display.responsive-table thead {
+                display: none;
+            }
+
+            table.display.responsive-table tr {
+                display: block;
+                margin-bottom: 15px;
+                border-bottom: 1px solid #ddd;
+            }
+
+            table.display.responsive-table td {
+                display: block;
+                text-align: center; /* Center text in each cell */
+                font-size: 14px;
+                position: relative;
+                padding: 10px;
+                border-bottom: 1px dotted #ccc;
+                margin: auto; /* Center items horizontally */
+            }
+
+            table.display.responsive-table td::before {
+                content: attr(data-label);
+                position: absolute;
+                left: 50%; /* Adjust label positioning */
+                transform: translateX(-50%);
+                top: 10px;
+                white-space: nowrap;
+                font-weight: bold;
+                text-align: center; /* Center label text */
+            }
+        }
+    </style>
+
+
     @livewireStyles
 </head>
 <!-- END: Head-->
