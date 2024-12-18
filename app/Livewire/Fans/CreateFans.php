@@ -62,8 +62,8 @@ class CreateFans extends Component
         // Get the latest 5 queue numbers with the status 'queue now'
         $this->callInQueue = FanQueue::where('cosplayer_id', $this->cosplayerId)
             ->where('status', 'queue now')
-            ->orderBy('queue_number', 'desc') // Sort by queue_number in descending order
-            ->take(5) // Limit to the latest 5
+            ->orderBy('queue_number', 'asc') // Sort by queue_number in ascending order
+            ->take(6) // Limit to the latest 5
             ->get();
     }
 
@@ -103,8 +103,8 @@ class CreateFans extends Component
 
         // Redirect with success message
         // return redirect('/');
-   // Redirect to home page with success message using `with()`
-   return redirect()->route('home')->with('success', 'You have successfully joined the queue. Your queue number is ' . $queueNumber);
+        // Redirect to home page with success message using `with()`
+        return redirect()->route('home')->with('success', 'You have successfully joined the queue. Your queue number is ' . $queueNumber);
     }
 
     public function render()
