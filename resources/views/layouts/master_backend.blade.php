@@ -42,25 +42,45 @@
         table.display.responsive-table {
             width: 100%;
             border-collapse: collapse;
+            border: 1px solid #ddd;
         }
 
+        table.display.responsive-table th,
+        table.display.responsive-table td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+            white-space: nowrap;
+            /* Prevent text wrapping */
+        }
+
+        /* Ensure table maintains horizontal scroll for tablets if content overflows */
+        @media screen and (max-width: 1024px) {
+            .responsive-table-wrapper {
+                overflow-x: scroll;
+            }
+
+            table.display.responsive-table {
+                font-size: 14px;
+                /* Adjust font size for readability */
+            }
+
+            table.display.responsive-table th,
+            table.display.responsive-table td {
+                white-space: nowrap;
+                /* Keep text on one line for better layout */
+            }
+        }
+
+        /* For Mobile (max-width: 768px) */
         @media screen and (max-width: 768px) {
             table.display.responsive-table {
-                text-align: center;
-            }
-
-            table.display.responsive-table thead th.cosplayer-name {
-                display: none;
-                /* Hide Cosplayer Name header */
-            }
-
-            table.display.responsive-table tbody td.cosplayer-name {
-                display: none;
-                /* Hide Cosplayer Name column */
+                font-size: 14px;
             }
 
             table.display.responsive-table thead {
                 display: none;
+                /* Hide the table header for mobile */
             }
 
             table.display.responsive-table tr {
@@ -71,31 +91,26 @@
 
             table.display.responsive-table td {
                 display: block;
-                text-align: center;
-                /* Center text in each cell */
+                text-align: left;
                 font-size: 14px;
                 position: relative;
                 padding: 10px;
                 border-bottom: 1px dotted #ccc;
-                margin: auto;
-                /* Center items horizontally */
+                white-space: normal;
+                /* Allow wrapping for long content */
             }
 
             table.display.responsive-table td::before {
                 content: attr(data-label);
                 position: absolute;
-                left: 50%;
-                /* Adjust label positioning */
-                transform: translateX(-50%);
+                left: 10px;
                 top: 10px;
                 white-space: nowrap;
                 font-weight: bold;
-                text-align: center;
-                /* Center label text */
+                text-align: left;
             }
         }
     </style>
-
 
     @livewireStyles
 </head>

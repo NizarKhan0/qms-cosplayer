@@ -33,9 +33,9 @@ new #[Layout('layouts.guest')] class extends Component {
     }
 }; ?>
 
-@extends('layouts.master_frontend')
-@section('title', 'Forgot Password')
-@section('content')
+<div>
+    @section('title', 'Forgot Password')
+
     <form wire:submit="sendPasswordResetLink">
         <div class="row">
             <div class="input-field col s12">
@@ -73,4 +73,5 @@ new #[Layout('layouts.guest')] class extends Component {
         </div>
     </form>
     </div>
-@endsection
+
+</div>

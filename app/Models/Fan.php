@@ -12,7 +12,6 @@ class Fan extends Model
 
     protected $fillable = [
         'name',
-        'phone',
     ];
 
     /**

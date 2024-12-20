@@ -19,20 +19,38 @@
 <body class="font-sans antialiased bg-gray-100">
 
     <!-- Credit Link at the top right -->
-    <div class="absolute top-0 right-0 m-4">
-        {{-- <a href="https://nizar-khan.com" target="_blank"
+    {{-- <div class="absolute top-0 right-0 m-4">
+        <a href="https://nizar-khan.com" target="_blank"
             class="px-4 py-2 text-sm text-white bg-purple-500 rounded-md hover:bg-purple-600">
             Developed by: Nizar Khan
-        </a> --}}
+        </a>
         <a href="https://nizar-khan.com" target="_blank"
         class="px-4 py-2 text-sm text-white bg-black rounded-md">
         Developed by: Nizar Khan
     </a>
+    </div> --}}
+
+    <!-- Responsive Header with Credit and Register Links -->
+    <div class="flex items-center justify-between p-4">
+        <!-- Register Link -->
+        <div>
+            <a href="{{ route('register') }}" target="_blank" class="px-4 py-2 text-sm text-white bg-black rounded-md">
+                Register Cosplayer
+            </a>
+        </div>
+
+        <!-- Credit Link -->
+        <div>
+            <a href="{{ route('login') }}" target="_blank" class="px-4 py-2 text-sm text-white bg-black rounded-md">
+                Login Cosplayer
+            </a>
+        </div>
     </div>
 
 
+
     <div class="container px-4 py-8 mx-auto">
-        <h1 class="mb-12 text-4xl font-bold text-center text-gray-800">Select a Cosplayer</h1>
+        <h1 class="pt-4 mb-12 text-4xl font-bold text-center text-gray-800">Select a Cosplayer</h1>
 
         @if (session()->has('success'))
             <div id="success-message"

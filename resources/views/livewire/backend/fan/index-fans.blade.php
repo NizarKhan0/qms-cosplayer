@@ -96,7 +96,6 @@ new class extends Component {
                                     <thead>
                                         <tr>
                                             <th>Name</th>
-                                            <th>Phone</th>
                                             <th>Queue Number</th>
                                             <th>Status</th>
                                             <th class="cosplayer-name">Cosplayer Name</th> <!-- Add class -->
@@ -107,11 +106,6 @@ new class extends Component {
                                         @foreach ($fanQueues as $fan)
                                             <tr>
                                                 <td>{{ $fan->fan->name }}</td>
-                                                <td>
-                                                    <a href="https://wa.me/{{ preg_replace('/\D/', '', $fan->fan->phone) }}" target="_blank">
-                                                        {{ $fan->fan->phone }}
-                                                    </a>
-                                                </td>
                                                 <td>{{ $fan->queue_number }}</td>
                                                 <td>
                                                     @if ($fan->status === 'Queue Now')
