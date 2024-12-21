@@ -12,7 +12,7 @@ use Livewire\WithPagination;
 new class extends Component {
     use WithPagination;
 
-    public $search = ''; // Search property
+    public $search = '';
 
     #[On('fanRegistered')]
     public function reloadFans()
@@ -22,10 +22,8 @@ new class extends Component {
 
     public function getFanQueues()
     {
-        // Base query
         $query = FanQueue::with('fan', 'cosplayer');
 
-        // Apply search filter
         if (!empty($this->search)) {
             $query->where(function ($q) {
                 $q->whereHas('fan', function ($subQuery) {
@@ -39,13 +37,10 @@ new class extends Component {
             });
         }
 
-        // Check if the logged-in user has role_id = 1
         if (Auth::user()->role_id === 1) {
-            // If role_id = 1, show all fan queues for all cosplayers
             return $query->paginate(8);
         } else {
-            // If role_id is not 1, show only the fan queues for the logged-in cosplayer
-            $cosplayerId = Auth::user()->id; // Get the cosplayer ID associated with the logged-in user
+            $cosplayerId = Auth::user()->id;
             return $query->where('cosplayer_id', $cosplayerId)->paginate(8);
         }
     }
@@ -57,11 +52,44 @@ new class extends Component {
         if ($fanQueue) {
             $fanQueue->status = $status;
             $fanQueue->save();
-
-            // Send success notification
             session()->flash('success', 'Status updated successfully!');
         }
     }
+
+    // Modified reset method
+    public function resetAllRecords()
+    {
+        // Check if user has admin privileges
+        if (Auth::user()->role_id !== 1) {
+            session()->flash('error', 'Unauthorized action.');
+            return;
+        }
+
+        try {
+            // Begin transaction
+            \DB::beginTransaction();
+
+            // Delete all fan queue records first (due to foreign key constraints)
+            FanQueue::query()->delete();
+
+            // Delete all fan records
+            Fan::query()->delete();
+
+            // Alternative approach if needed:
+            \DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+            \DB::table('fan_queues')->delete();
+            \DB::table('fans')->delete();
+            \DB::statement('SET FOREIGN_KEY_CHECKS=1;');
+
+            \DB::commit();
+
+            session()->flash('success', 'All records have been reset successfully!');
+        } catch (\Exception $e) {
+            \DB::rollback();
+            session()->flash('error', 'An error occurred while resetting records: ' . $e->getMessage());
+        }
+    }
+
 
     public function updatingSearch()
     {
@@ -77,13 +105,31 @@ new class extends Component {
                     <h5 class="green lighten-4">{{ session('success') }}</h5>
                 </div>
             @endif
+            @if (session()->has('error'))
+                <div class="alert alert-danger">
+                    <h5 class="red lighten-4">{{ session('error') }}</h5>
+                </div>
+            @endif
         </div>
 
         <div class="col s12">
-            <!-- New Search Input -->
-            <div class="input-field">
-                <input type="text" wire:model.live="search" placeholder="Search by Name, Queue Number, or Status" class="validate">
+            <!-- Search and Reset Button Row -->
+            <div class="row">
+                <div class="col s8">
+                    <div class="input-field">
+                        <input type="text" wire:model.live="search" placeholder="Search by Name, Queue Number, or Status" class="validate">
+                    </div>
+                </div>
+                @if(Auth::user()->role_id === 1)
+                <div class="col s4 pt-2">
+                    <button wire:click="resetAllRecords" class="btn red waves-effect waves-light right">
+                        Reset All Records
+                        <i class="material-icons right">delete_forever</i>
+                    </button>
+                </div>
+                @endif
             </div>
+
             <div class="card">
                 <div class="card-content">
                     <div class="row">
@@ -98,7 +144,7 @@ new class extends Component {
                                             <th>Name</th>
                                             <th>Queue Number</th>
                                             <th>Status</th>
-                                            <th class="cosplayer-name">Cosplayer Name</th> <!-- Add class -->
+                                            <th class="cosplayer-name">Cosplayer Name</th>
                                             <th>Action</th>
                                         </tr>
                                     </thead>
@@ -116,7 +162,7 @@ new class extends Component {
                                                         <span class="chip red white-text">Pending</span>
                                                     @endif
                                                 </td>
-                                                <td class="cosplayer-name">{{ $fan->cosplayer->cosplayer_name }}</td> <!-- Add class -->
+                                                <td class="cosplayer-name">{{ $fan->cosplayer->cosplayer_name }}</td>
                                                 <td>
                                                     <select wire:change="updateStatus({{ $fan->id }}, $event.target.value)" class="browser-default">
                                                         <option value="" disabled selected>Change Status</option>
@@ -139,14 +185,12 @@ new class extends Component {
                             <div class="pagination center-align">
                                 @if ($fanQueues->lastPage() > 1)
                                     <ul class="pagination">
-                                        {{-- Previous Page Link --}}
                                         @if ($fanQueues->onFirstPage())
                                             <li class="disabled"><a href="#!"><i class="material-icons">chevron_left</i></a></li>
                                         @else
                                             <li class="waves-effect"><a wire:click="previousPage" href="#!"><i class="material-icons">chevron_left</i></a></li>
                                         @endif
 
-                                        {{-- Pagination Elements --}}
                                         @foreach(range(1, $fanQueues->lastPage()) as $page)
                                             @if($page == $fanQueues->currentPage())
                                                 <li class="active"><a href="#!">{{ $page }}</a></li>
@@ -155,7 +199,6 @@ new class extends Component {
                                             @endif
                                         @endforeach
 
-                                        {{-- Next Page Link --}}
                                         @if ($fanQueues->hasMorePages())
                                             <li class="waves-effect"><a wire:click="nextPage" href="#!"><i class="material-icons">chevron_right</i></a></li>
                                         @else
@@ -171,4 +214,3 @@ new class extends Component {
         </div>
     </div>
 </div>
-

@@ -1,31 +1,36 @@
 <div>
+
     <div wire:poll="reloadFans">
         <div class="row">
-            <div class="input-field col s12">
-                <h5 class="ml-4">{{ $cosplayerName }} Queue System</h5>
+            <div class="input-field col s12 text-center">
+                <h5>Fill in the form to get into {{ $cosplayerName }}'s queue. Thank you!</h5>
             </div>
             <div class="input-field col s12">
-                <h6 class="ml-4">Total Queue Number Now: {{ $pendingQueue }}</h6>
-                <div>
-                    <h6 class="ml-4">Number Call In:</h6>
-                    @forelse ($callInQueue as $queue)
-                        <li>
-                            Queue #{{ $queue->queue_number }} - Name: {{ $queue->fan->name }}
-                        </li>
-                    @empty
-                        <li>No fans in the call-in queue yet.</li>
-                    @endforelse
+                <h6 class="ml-4"><strong>Current Total Queue Numbers:</strong> {{ $pendingQueue }}</h6>
+                <div class="mt-3">
+                    <h6 class="ml-4"><strong>Fans Currently Called In:</strong></h6>
+                    <ul class="collection ml-4">
+                        @forelse ($callInQueue as $queue)
+                            <li class="collection-item">
+                                <span class="queue-number">Queue #{{ $queue->queue_number }}</span> -
+                                <span class="fan-name">Name: {{ $queue->fan->name }}</span>
+                            </li>
+                        @empty
+                            <li class="collection-item">No fans in the call-in queue yet.</li>
+                        @endforelse
+                    </ul>
                 </div>
             </div>
         </div>
 
         @if($userQueueInfo)
-            <div class="card-panel">
-                <h6>Your Queue Information</h6>
-                <p>Name: {{ $userQueueInfo['name'] }}</p>
-                <p>Queue Number: #{{ $userQueueInfo['queue_number'] }}</p>
-                <p>Status:
-                    <span class="badge {{ $userQueueInfo['status'] === 'pending' ? 'orange' : ($userQueueInfo['status'] === 'queue now' ? 'green' : 'blue') }}">
+            <div class="card-panel teal lighten-5">
+                <h6><strong>Your Queue Information (Please screenshot for your reference):</strong></h6>
+                <p><strong>Name:</strong> {{ $userQueueInfo['name'] }}</p>
+                <p><strong>Queue Number:</strong> #{{ $userQueueInfo['queue_number'] }}</p>
+                <p>
+                    <strong>Status:</strong>
+                    <span class="badge {{ strtolower($userQueueInfo['status']) === 'pending' ? 'red' : (strtolower($userQueueInfo['status']) === 'queue now' ? 'blue' : 'green') }}">
                         {{ ucfirst($userQueueInfo['status']) }}
                     </span>
                 </p>

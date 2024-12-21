@@ -42,52 +42,22 @@ class CreateFans extends Component
 
     public function checkExistingQueue()
     {
-        $sessionKey = "fan_queue_{$this->cosplayerId}";
-        $queueData = Session::get($sessionKey);
+        $sessionKey = "fanqueue{$this->cosplayerId}";
 
-        // First try to get queue info from session
-        if ($queueData) {
+        if (Session::has($sessionKey)) {
+            $queueData = Session::get($sessionKey);
             $fanQueue = FanQueue::where('fan_id', $queueData['fan_id'])
                 ->where('cosplayer_id', $this->cosplayerId)
-                ->whereNotIn('status', ['complete']) // Don't show completed queues
                 ->first();
 
             if ($fanQueue) {
-                $this->setUserQueueInfo($fanQueue);
-                return;
+                $this->userQueueInfo = [
+                    'queue_number' => $fanQueue->queue_number,
+                    'name' => $fanQueue->fan->name,
+                    'status' => $fanQueue->status
+                ];
             }
         }
-
-        // If session doesn't exist or queue not found, try to find by name if provided
-        if (!empty($this->name)) {
-            $fan = Fan::where('name', $this->name)->first();
-            if ($fan) {
-                $fanQueue = FanQueue::where('fan_id', $fan->id)
-                    ->where('cosplayer_id', $this->cosplayerId)
-                    ->whereNotIn('status', ['complete'])
-                    ->first();
-
-                if ($fanQueue) {
-                    // Update session with found queue
-                    Session::put($sessionKey, [
-                        'fan_id' => $fan->id,
-                        'queue_number' => $fanQueue->queue_number
-                    ]);
-                    Session::save();
-
-                    $this->setUserQueueInfo($fanQueue);
-                }
-            }
-        }
-    }
-
-    private function setUserQueueInfo($fanQueue)
-    {
-        $this->userQueueInfo = [
-            'queue_number' => $fanQueue->queue_number,
-            'name' => $fanQueue->fan->name,
-            'status' => $fanQueue->status
-        ];
     }
 
     public function updateQueueInfo()
@@ -133,8 +103,8 @@ class CreateFans extends Component
             'status' => 'pending',
         ]);
 
-        // Store in session as a convenience
-        $sessionKey = "fan_queue_{$this->cosplayerId}";
+        // Store in session (expires in 24 hours)
+        $sessionKey = "fanqueue{$this->cosplayerId}";
         Session::put($sessionKey, [
             'fan_id' => $fan->id,
             'queue_number' => $queueNumber

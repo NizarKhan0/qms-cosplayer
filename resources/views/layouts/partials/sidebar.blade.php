@@ -61,7 +61,7 @@
 
         <li class="bold"><a class="waves-effect waves-cyan " href="{{ route('profile') }}"><i
                     class="material-icons">person_outline</i><span class="menu-title" data-i18n="User Profile">User
-                    Profile</span></a>
+                    Profile / Logout</span></a>
         </li>
 
     </ul>
