@@ -29,11 +29,11 @@ new class extends Component {
                 $q->whereHas('fan', function ($subQuery) {
                     $subQuery->where('name', 'like', '%' . $this->search . '%');
                 })
-                ->orWhere('queue_number', 'like', '%' . $this->search . '%')
-                ->orWhere('status', 'like', '%' . $this->search . '%')
-                ->orWhereHas('cosplayer', function ($subQuery) {
-                    $subQuery->where('cosplayer_name', 'like', '%' . $this->search . '%');
-                });
+                    ->orWhere('queue_number', 'like', '%' . $this->search . '%')
+                    ->orWhere('status', 'like', '%' . $this->search . '%')
+                    ->orWhereHas('cosplayer', function ($subQuery) {
+                        $subQuery->where('cosplayer_name', 'like', '%' . $this->search . '%');
+                    });
             });
         }
 
@@ -55,41 +55,6 @@ new class extends Component {
             session()->flash('success', 'Status updated successfully!');
         }
     }
-
-    // Modified reset method
-    public function resetAllRecords()
-    {
-        // Check if user has admin privileges
-        if (Auth::user()->role_id !== 1) {
-            session()->flash('error', 'Unauthorized action.');
-            return;
-        }
-
-        try {
-            // Begin transaction
-            \DB::beginTransaction();
-
-            // Delete all fan queue records first (due to foreign key constraints)
-            FanQueue::query()->delete();
-
-            // Delete all fan records
-            Fan::query()->delete();
-
-            // Alternative approach if needed:
-            \DB::statement('SET FOREIGN_KEY_CHECKS=0;');
-            \DB::table('fan_queues')->delete();
-            \DB::table('fans')->delete();
-            \DB::statement('SET FOREIGN_KEY_CHECKS=1;');
-
-            \DB::commit();
-
-            session()->flash('success', 'All records have been reset successfully!');
-        } catch (\Exception $e) {
-            \DB::rollback();
-            session()->flash('error', 'An error occurred while resetting records: ' . $e->getMessage());
-        }
-    }
-
 
     public function updatingSearch()
     {
@@ -115,19 +80,12 @@ new class extends Component {
         <div class="col s12">
             <!-- Search and Reset Button Row -->
             <div class="row">
-                <div class="col s8">
+                <div class="col s12">
                     <div class="input-field">
-                        <input type="text" wire:model.live="search" placeholder="Search by Name, Queue Number, or Status" class="validate">
+                        <input type="text" wire:model.live="search"
+                            placeholder="Search by Name, Queue Number, or Status" class="validate">
                     </div>
                 </div>
-                @if(Auth::user()->role_id === 1)
-                <div class="col s4 pt-2">
-                    <button wire:click="resetAllRecords" class="btn red waves-effect waves-light right">
-                        Reset All Records
-                        <i class="material-icons right">delete_forever</i>
-                    </button>
-                </div>
-                @endif
             </div>
 
             <div class="card">
@@ -164,15 +122,21 @@ new class extends Component {
                                                 </td>
                                                 <td class="cosplayer-name">{{ $fan->cosplayer->cosplayer_name }}</td>
                                                 <td>
-                                                    <select wire:change="updateStatus({{ $fan->id }}, $event.target.value)" class="browser-default">
+                                                    <select
+                                                        wire:change="updateStatus({{ $fan->id }}, $event.target.value)"
+                                                        class="browser-default">
                                                         <option value="" disabled selected>Change Status</option>
-                                                        <option value="Queue Now" {{ $fan->status === 'Queue Now' ? 'selected' : '' }}>
+                                                        <option value="Queue Now"
+                                                            {{ $fan->status === 'Queue Now' ? 'selected' : '' }}>
                                                             Queue Now
                                                         </option>
-                                                        <option value="Complete" {{ $fan->status === 'Complete' ? 'selected' : '' }}>
+                                                        <option value="Complete"
+                                                            {{ $fan->status === 'Complete' ? 'selected' : '' }}>
                                                             Complete
                                                         </option>
-                                                        <option value="Pending" {{ $fan->status === 'Pending' ? 'selected' : '' }}>Pending</option>
+                                                        <option value="Pending"
+                                                            {{ $fan->status === 'Pending' ? 'selected' : '' }}>Pending
+                                                        </option>
                                                     </select>
                                                 </td>
                                             </tr>
@@ -186,23 +150,28 @@ new class extends Component {
                                 @if ($fanQueues->lastPage() > 1)
                                     <ul class="pagination">
                                         @if ($fanQueues->onFirstPage())
-                                            <li class="disabled"><a href="#!"><i class="material-icons">chevron_left</i></a></li>
+                                            <li class="disabled"><a href="#!"><i
+                                                        class="material-icons">chevron_left</i></a></li>
                                         @else
-                                            <li class="waves-effect"><a wire:click="previousPage" href="#!"><i class="material-icons">chevron_left</i></a></li>
+                                            <li class="waves-effect"><a wire:click="previousPage" href="#!"><i
+                                                        class="material-icons">chevron_left</i></a></li>
                                         @endif
 
-                                        @foreach(range(1, $fanQueues->lastPage()) as $page)
-                                            @if($page == $fanQueues->currentPage())
+                                        @foreach (range(1, $fanQueues->lastPage()) as $page)
+                                            @if ($page == $fanQueues->currentPage())
                                                 <li class="active"><a href="#!">{{ $page }}</a></li>
                                             @else
-                                                <li class="waves-effect"><a wire:click="gotoPage({{ $page }})" href="#!">{{ $page }}</a></li>
+                                                <li class="waves-effect"><a wire:click="gotoPage({{ $page }})"
+                                                        href="#!">{{ $page }}</a></li>
                                             @endif
                                         @endforeach
 
                                         @if ($fanQueues->hasMorePages())
-                                            <li class="waves-effect"><a wire:click="nextPage" href="#!"><i class="material-icons">chevron_right</i></a></li>
+                                            <li class="waves-effect"><a wire:click="nextPage" href="#!"><i
+                                                        class="material-icons">chevron_right</i></a></li>
                                         @else
-                                            <li class="disabled"><a href="#!"><i class="material-icons">chevron_right</i></a></li>
+                                            <li class="disabled"><a href="#!"><i
+                                                        class="material-icons">chevron_right</i></a></li>
                                         @endif
                                     </ul>
                                 @endif

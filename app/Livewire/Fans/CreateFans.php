@@ -100,7 +100,7 @@ class CreateFans extends Component
             'fan_id' => $fan->id,
             'cosplayer_id' => $this->cosplayerId,
             'queue_number' => $queueNumber,
-            'status' => 'pending',
+            'status' => 'Pending',
         ]);
 
         // Store in session (expires in 24 hours)
