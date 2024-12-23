@@ -5,56 +5,42 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-
-    <title>Cosplayer</title>
-
-    <!-- Fonts -->
+    <title>Cosplayer Queue System</title>
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
-
-    <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 
-<body class="font-sans antialiased bg-gray-100">
-
-    <!-- Credit Link at the top right -->
-    {{-- <div class="absolute top-0 right-0 m-4">
-        <a href="https://nizar-khan.com" target="_blank"
-            class="px-4 py-2 text-sm text-white bg-purple-500 rounded-md hover:bg-purple-600">
-            Developed by: Nizar Khan
-        </a>
-        <a href="https://nizar-khan.com" target="_blank"
-        class="px-4 py-2 text-sm text-white bg-black rounded-md">
-        Developed by: Nizar Khan
-    </a>
-    </div> --}}
-
-    <!-- Responsive Header with Credit and Register Links -->
-    <div class="flex items-center justify-between p-4">
-        <!-- Register Link -->
-        <div>
-            <a href="{{ route('register') }}" target="_blank" class="px-4 py-2 text-sm text-white bg-black rounded-md">
-                Register Cosplayer
-            </a>
+<body class="flex flex-col min-h-screen font-sans antialiased bg-gray-50">
+    <!-- Navbar -->
+    <nav class="bg-white border-b border-gray-200">
+        <div class="container px-6 py-4 mx-auto">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center">
+                    <a href="/" class="text-xl font-bold text-gray-800">CosQueue</a>
+                </div>
+                <div class="flex items-center space-x-2">
+                    <a href="{{ route('register') }}"
+                        class="px-6 py-2 text-sm font-medium text-white transition-colors duration-200 bg-teal-600 rounded-md hover:bg-teal-700">
+                        Register
+                    </a>
+                    <a href="{{ route('login') }}"
+                        class="px-6 py-2 text-sm font-medium text-teal-600 transition-colors duration-200 border border-teal-600 rounded-md hover:bg-teal-50">
+                        Login
+                    </a>
+                </div>
+            </div>
         </div>
+    </nav>
 
-        <!-- Credit Link -->
-        <div>
-            <a href="{{ route('login') }}" target="_blank" class="px-4 py-2 text-sm text-white bg-black rounded-md">
-                Login Cosplayer
-            </a>
-        </div>
-    </div>
-
-
-
-    <div class="container px-4 py-8 mx-auto">
-        <h1 class="pt-4 mb-12 text-4xl font-bold text-center text-gray-800">Select a Cosplayer</h1>
+    <!-- Main Content -->
+    <main class="container flex-grow px-4 py-8 mx-auto">
+        <h1 class="mb-2 text-2xl font-bold text-center text-gray-800">Cosplayer Queue System</h1>
+        <p class="mb-12 text-center text-gray-600">Select a cosplayer to join their queue</p>
 
         @if (session()->has('success'))
             <div id="success-message"
-                class="relative px-4 py-3 mb-4 text-green-400 bg-green-100 border border-green-100 rounded"
+                class="relative px-4 py-3 mb-4 border rounded-md text-emerald-700 bg-emerald-50 border-emerald-200"
                 role="alert">
                 <span class="block sm:inline">{{ session('success') }}</span>
             </div>
@@ -63,26 +49,43 @@
         <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
             @foreach ($cosplayers as $cosplayer)
                 <div
-                    class="overflow-hidden transition-all transform rounded-lg shadow-lg bg-blue-50 hover:scale-105 hover:shadow-xl">
-                    <div class="p-6">
-                        <div class="flex flex-col items-center">
-                            <div class="flex items-center justify-center w-32 h-32 mb-4 bg-gray-200 rounded-full">
-                                <svg class="w-16 h-16 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
-                                        clip-rule="evenodd" />
+                    class="flex flex-col items-center justify-center transition-all duration-200 border border-gray-200 rounded-lg bg-gradient-to-b from-teal-50 to-white">
+                    <div class="p-6 text-center">
+                        <h2 class="mb-3 text-lg font-semibold text-gray-800">{{ $cosplayer->cosplayer_name }}</h2>
+                        <div class="flex items-center mb-4 text-gray-600">
+                            <div class="flex items-center px-3 py-1.5 bg-white/80 rounded-md border border-gray-100">
+                                <svg class="w-4 h-4 mr-2 text-teal-600" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
                                 </svg>
+                                <span class="text-sm">Queue: {{ $cosplayer->fan_queues_count ?? 0 }}</span>
                             </div>
-                            <h2 class="mb-4 text-xl font-semibold text-gray-800">{{ $cosplayer->cosplayer_name }}</h2>
-                            <a href="{{ route('fans', ['cosplayerId' => $cosplayer->id]) }}"
-                                class="w-full px-4 py-2 text-center text-white transition-colors bg-blue-600 rounded-md hover:bg-blue-700">
-                                Start Queue
-                            </a>
                         </div>
+                        <a href="{{ route('fans', ['cosplayerSlug' => $cosplayer->slug]) }}"
+                            class="block w-full px-4 py-2 text-center text-white transition-colors duration-200 bg-teal-600 rounded-md hover:bg-teal-700">
+                            Join Queue
+                        </a>
                     </div>
                 </div>
             @endforeach
         </div>
-    </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-gray-200">
+        <div class="container px-6 py-4 mx-auto">
+            <div class="flex flex-col items-center justify-between md:flex-row">
+                <div class="text-sm text-gray-600">
+                    © 2024 CosQueue.
+                </div>
+                <div class="text-sm text-gray-600">
+                    Created by <a href="https://nizar-khan.com" target="_blank"
+                        class="font-medium text-teal-600 hover:text-teal-700">@NizarKhan</a>
+                </div>
+            </div>
+        </div>
+    </footer>
 
     @if (session()->has('success'))
         <script>

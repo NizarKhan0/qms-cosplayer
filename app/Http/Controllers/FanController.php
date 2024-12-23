@@ -2,14 +2,19 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Cosplayer;
 use Illuminate\Http\Request;
 
 class FanController extends Controller
 {
-    public function displayFans($cosplayerId)
+    public function displayFans($cosplayerSlug)
     {
-        return view('livewire.fans.index-fans', [
-            'cosplayerId' => $cosplayerId
+        $cosplayer = Cosplayer::where('slug', $cosplayerSlug)->firstOrFail();
+
+        return view('livewire.frontend.index-fans', [
+            'cosplayerId' => $cosplayer->id,
+            'cosplayerName' => $cosplayer->cosplayer_name,
         ]);
     }
+
 }

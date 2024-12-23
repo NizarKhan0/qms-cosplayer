@@ -14,7 +14,11 @@ class HomeController extends Controller
         //  table user direct dia amik dari cosplayer punya table
         $cosplayers = Cosplayer::whereHas('user', function ($query) {
             $query->where('role_id', 3);
-        })->get();
+        })
+        ->withCount(['fanQueues' => function ($query) {
+            $query->where('status', 'Pending');
+        }])
+        ->get();
 
         return view('index', compact('cosplayers'));
     }

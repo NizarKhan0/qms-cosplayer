@@ -14,7 +14,6 @@ return new class extends Migration
         Schema::create('fans', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('phone');
             $table->timestamps();
         });
     }

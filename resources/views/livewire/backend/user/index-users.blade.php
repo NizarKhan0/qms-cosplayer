@@ -19,6 +19,7 @@ new class extends Component {
         $this->users = User::all();
     }
 
+    //userId & role ni utk paarmeter action updaet role kat bawah ni
     public function updateRole($userId, $role)
     {
         // Find the user by ID
@@ -38,71 +39,62 @@ new class extends Component {
     }
 }; ?>
 
-<div>
-
-    <div wire:poll="reloadUsers" class="row">
-
-        <div>
-            @if (session()->has('success'))
-                <div class="alert alert-success">
-                    <h5 class="green lighten-4">{{ session('success') }}</h5>
-                </div>
-            @endif
+<div wire:poll="reloadUsers">
+    <!-- Success Message -->
+    @if (session()->has('success'))
+        <div class="alert alert-success">
+            {{ session('success') }}
         </div>
-
-        <div class="col s12">
-            <div class="card">
-                <div class="card-content">
-                    <div class="row">
-                        <div class="col s12">
-                            <table id="page-length-option" class="display">
-                                <thead>
-                                    <tr>
-                                        <th>Name</th>
-                                        <th>Email</th>
-                                        <th>Role</th>
-                                        <th>Created At</th>
-                                        <th>Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach ($users as $user)
-                                        <tr>
-                                            <td>{{ $user->name }}</td>
-                                            <td>{{ $user->email }}</td>
-                                            <td>
-                                                @if ($user->role_id === 1)
-                                                    <span class="chip red white-text">Super Admin</span>
-                                                @elseif ($user->role_id === 2)
-                                                    <span class="chip blue white-text">Admin</span>
-                                                @else
-                                                    <span class="chip green white-text">Cosplayer</span>
-                                                @endif
-                                            </td>
-                                            <td>{{ $user->created_at }}</td>
-                                            <td>
-                                                <!-- Role Selection Dropdown -->
-                                                <select
-                                                    wire:change="updateRole({{ $user->id }}, $event.target.value)"
-                                                    class="browser-default">
-                                                    <option value="" disabled selected>Change Role</option>
-                                                    <option value="1" {{ $user->role_id === 1 ? 'selected' : '' }}>
-                                                        Super Admin</option>
-                                                    <option value="2" {{ $user->role_id === 2 ? 'selected' : '' }}>
-                                                        Admin</option>
-                                                    <option value="3" {{ $user->role_id === 3 ? 'selected' : '' }}>
-                                                        Cosplayer</option>
-                                                </select>
-                                            </td>
-                                        </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
+    @endif
+    <div class="card">
+        <h5 class="card-header">List Users</h5>
+        <div class="card-body">
+            <div class="table-responsive text-nowrap">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>SL</th>
+                            <th>User Name</th>
+                            <th>Email</th>
+                            <th>Role</th>
+                            <th>Created At</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ($users as $user)
+                            <tr>
+                                <td>{{ $loop->iteration }}</td>
+                                <td>{{ $user->name }}</td>
+                                <td>{{ $user->email }}</td>
+                                <td>
+                                    @if ($user->role_id === 1)
+                                        <span class="badge bg-label-danger me-1">Super Admin</span>
+                                    @elseif ($user->role_id === 2)
+                                        <span class="badge bg-label-info me-1">Admin</span>
+                                    @else
+                                        <span class="badge bg-label-success me-1">Cosplayer</span>
+                                    @endif
+                                </td>
+                                <td>{{ $user->created_at }}</td>
+                                <td>
+                                    <!-- Role Selection Dropdown -->
+                                    <select wire:change="updateRole({{ $user->id }}, $event.target.value)"
+                                        class="browser-default">
+                                        <option value="" disabled selected>Change Role</option>
+                                        <option value="1" {{ $user->role_id === 1 ? 'selected' : '' }}>Super Admin
+                                        </option>
+                                        <option value="2" {{ $user->role_id === 2 ? 'selected' : '' }}>Admin
+                                        </option>
+                                        <option value="3" {{ $user->role_id === 3 ? 'selected' : '' }}>Cosplayer
+                                        </option>
+                                    </select>
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
-
 </div>

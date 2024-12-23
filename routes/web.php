@@ -7,7 +7,7 @@ use App\Http\Controllers\HomeController;
 
 //Frontend Homepage
 Route::get('/', [HomeController::class, 'index'])->name('home');
-Route::get('/cosplayer-{cosplayerId}', [FanController::class, 'displayFans'])->name('fans');
+Route::get('/coser-{cosplayerSlug}', [FanController::class, 'displayFans'])->name('fans');
 
 //Backend
 // Route::view('dashboard', 'backend.dashboard')

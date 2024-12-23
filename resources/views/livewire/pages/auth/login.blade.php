@@ -26,61 +26,59 @@ new #[Layout('layouts.guest')] class extends Component {
 <div>
     @section('title', 'Login')
 
-    <form wire:submit="login">
-        <div class="row">
-            <div class="input-field col s12">
-                <h5 class="ml-4">Sign in</h5>
-            </div>
-        </div>
-        <div class="row margin">
-            <div class="input-field col s12">
-                <i class="pt-2 material-icons prefix">mail_outline</i>
-                <x-input-label for="email" :value="__('Email')" />
-                <x-text-input wire:model="form.email" id="email" class="block w-full mt-1" type="email" name="email"
-                    required autofocus autocomplete="username" />
-                <x-input-error :messages="$errors->get('form.email')" class="mt-2" />
-            </div>
-        </div>
-        <div class="row margin">
-            <div class="input-field col s12">
-                <i class="pt-2 material-icons prefix">lock_outline</i>
-                <x-input-label for="password" :value="__('Password')" />
+    <form wire:submit.prevent="login">
+        <h1 class="mb-6 text-2xl font-semibold text-center text-gray-800">Sign in</h1>
 
-                <x-text-input wire:model="form.password" id="password" class="block w-full mt-1" type="password"
-                    name="password" required autocomplete="current-password" />
+        <!-- Email -->
+        <div class="mb-4">
+            <label for="email" class="block mb-1 text-sm font-medium text-gray-700">Email</label>
+            <input wire:model="form.email" id="email" type="email"
+                class="block w-full px-4 py-2 border
+                @if ($errors->has('form.email')) border-red-500 @else border-gray-300 @endif
+                rounded-md shadow-sm focus:outline-none focus:ring-teal-500 focus:border-teal-500"
+                required autofocus autocomplete="username">
+            @error('form.email')
+                <span class="text-sm text-red-500">{{ $message }}</span>
+            @enderror
+        </div>
 
-                <x-input-error :messages="$errors->get('form.password')" class="mt-2" />
-            </div>
+        <!-- Password -->
+        <div class="mb-4">
+            <label for="password" class="block mb-1 text-sm font-medium text-gray-700">Password</label>
+            <input wire:model="form.password" id="password" type="password"
+                class="block w-full px-4 py-2 border
+                @if ($errors->has('form.password')) border-red-500 @else border-gray-300 @endif
+                rounded-md shadow-sm focus:outline-none focus:ring-teal-500 focus:border-teal-500"
+                required autocomplete="current-password">
+            @error('form.password')
+                <span class="text-sm text-red-500">{{ $message }}</span>
+            @enderror
         </div>
-        <div class="row">
-            <div class="mt-1 ml-2 col s12 m12 l12">
-                <p>
-                    <label>
-                        <input wire:model="form.remember" id="remember" type="checkbox"
-                            class="text-indigo-600 border-gray-300 rounded shadow-sm focus:ring-indigo-500" name="remember">
-                        <span class="text-sm text-gray-600 ms-2">{{ __('Remember me') }}</span>
-                    </label>
-                </p>
-            </div>
+
+        <!-- Remember Me and Forgot Password -->
+        <div class="flex items-center justify-between mb-6">
+            <label class="flex items-center text-sm text-gray-600">
+                <input wire:model="form.remember" id="remember" type="checkbox"
+                    class="text-teal-600 border-gray-300 rounded shadow-sm focus:ring-teal-500">
+                <span class="ml-2">Remember me</span>
+            </label>
+            @if (Route::has('password.request'))
+                <a href="{{ route('password.request') }}" class="text-sm text-teal-600 hover:underline">Forgot
+                    password?</a>
+            @endif
         </div>
-        <div class="row">
-            <div class="input-field col s12">
-                <button type="submit"
-                    class="btn waves-effect waves-light border-round gradient-45deg-purple-deep-orange col s12">Login</button>
-            </div>
-        </div>
-        <div class="row">
-            <div class="input-field col s6 m6 l6">
-                <p class="margin medium-small"><a href="{{ route('register') }}">Register Now!</a></p>
-            </div>
-            <div class="input-field col s6 m6 l6">
-                @if (Route::has('password.request'))
-                    <p class="margin right-align medium-small"><a href="{{ route('password.request') }}"
-                            wire:navigate>Forgot password ?</a></p>
-                    </a>
-                @endif
-            </div>
+
+        <!-- Submit Button -->
+        <button type="submit"
+            class="w-full py-2 text-white transition duration-200 bg-teal-600 rounded-md hover:bg-teal-700">
+            Login
+        </button>
+
+        <!-- Register Link -->
+        <div class="mt-6 text-center">
+            <p class="text-sm text-gray-600">Don't have an account?
+                <a href="{{ route('register') }}" class="text-teal-600 hover:underline">Register Now!</a>
+            </p>
         </div>
     </form>
-    </div>
 </div>

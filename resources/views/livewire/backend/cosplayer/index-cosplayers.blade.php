@@ -14,28 +14,37 @@ new class extends Component {
         $this->cosplayers = Cosplayer::all();
     }
 
-    public function clearAllRecords()
+    public function clearAllRecords($cosplayerId)
     {
         try {
-            // Disable foreign key checks temporarily
-            \DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+            // Validate the cosplayer ID
+            $cosplayer = Cosplayer::findOrFail($cosplayerId);
 
-            // Truncate tables to clear records and reset auto-increment
-            \DB::table('fan_queues')->truncate();
-            \DB::table('fans')->truncate();
+            // Delete related records in a transaction
+            \DB::transaction(function () use ($cosplayerId) {
+                // Get fan IDs associated with the cosplayer from FanQueue
+                $fanIds = FanQueue::where('cosplayer_id', $cosplayerId)->pluck('fan_id');
 
-            // Re-enable foreign key checks
-            \DB::statement('SET FOREIGN_KEY_CHECKS=1;');
+                // Delete records in FanQueue for the cosplayer
+                FanQueue::where('cosplayer_id', $cosplayerId)->delete();
 
-            session()->flash('success', 'All records have been cleared, and auto-increment values have been reset!');
+                // Delete records in Fans table using the collected fan IDs
+                Fan::whereIn('id', $fanIds)->delete();
+            });
+
+            session()->flash('success', "All records for cosplayer '{$cosplayer->cosplayer_name}' have been cleared!");
         } catch (\Exception $e) {
             session()->flash('error', 'An error occurred while clearing records: ' . $e->getMessage());
         }
     }
-}; ?>
+};
+?>
 
-<div>
-    <div class="row">
+
+<div class="card">
+    <h5 class="card-header">Cosplayer Queue Records (clear by manual if needed)</h5>
+    <div class="card-body">
+        <!-- Success and Error Alerts -->
         <div>
             @if (session()->has('success'))
                 <div class="alert alert-success">
@@ -49,38 +58,32 @@ new class extends Component {
             @endif
         </div>
 
-        <div class="col s12">
-            <div class="card">
-                <div class="card-content">
-                    <h5 class="card-title">Cosplayer Records</h5>
-                    <table class="responsive-table">
-                        <thead>
-                            <tr>
-                                <th>Cosplayer Name</th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach ($cosplayers as $cosplayer)
-                                <tr>
-                                    <td>{{ $cosplayer->cosplayer_name }}</td>
-                                    <td>
-                                        @if (Auth::user()->role_id === 1)
-                                            <button wire:click="clearAllRecords"
-                                                class="btn red waves-effect waves-light">
-                                                Clear All Records
-                                                <i class="material-icons right">delete_forever</i>
-                                            </button>
-                                        @else
-                                            <span class="grey-text">No Permission</span>
-                                        @endif
-                                    </td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+        <!-- Cosplayer Records Table -->
+        <div class="table-responsive text-nowrap">
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Cosplayer Name</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach ($cosplayers as $cosplayer)
+                        <tr>
+                            <td>{{ $cosplayer->cosplayer_name }}</td>
+                            <td>
+                                @if (Auth::user()->role_id === 1)
+                                    <button wire:click="clearAllRecords({{ $cosplayer->id }})" class="btn btn-danger">
+                                        <i class="bx bx-trash"></i>
+                                    </button>
+                                @else
+                                    <span class="text-muted">No Permission</span>
+                                @endif
+                            </td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
         </div>
     </div>
 </div>

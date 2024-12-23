@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Session;
 
 class CreateFans extends Component
 {
-    #[Validate('required|unique:fans,name|min:5')]
+    #[Validate('required|min:5')]
     public $name = '';
     public $queue_number = null;
     public $cosplayerId = null;
@@ -86,6 +86,16 @@ class CreateFans extends Component
     {
         $this->validate();
 
+        // Check if the name already exists for the current cosplayer
+        $existingFanQueue = FanQueue::whereHas('fan', function ($query) {
+            $query->where('name', $this->name);
+        })->where('cosplayer_id', $this->cosplayerId)->exists();
+
+        if ($existingFanQueue) {
+            session()->flash('error', 'The name "' . $this->name . '" is already in the queue for this cosplayer.');
+            return;
+        }
+
         // Create the fan
         $fan = Fan::create([
             'name' => $this->name,
@@ -117,7 +127,7 @@ class CreateFans extends Component
             'status' => 'pending'
         ];
 
-        session()->flash('success', 'You have successfully joined the queue. Your queue number is ' . $queueNumber);
+        // session()->flash('success', 'You have successfully joined the queue. Your queue number is ' . $queueNumber);
     }
 
     public function render()

@@ -36,42 +36,35 @@ new #[Layout('layouts.guest')] class extends Component {
 <div>
     @section('title', 'Forgot Password')
 
-    <form wire:submit="sendPasswordResetLink">
-        <div class="row">
-            <div class="input-field col s12">
-                <h5 class="ml-4">Forgot Password</h5>
-                {{-- <p class="ml-4">You can reset your password</p> --}}
-                <p class="ml-4"> Forgot your password? No problem. Just let us know your email address and we will email
-                    you a password reset link that will allow you to choose a new one.</p>
-            </div>
+    <form wire:submit.prevent="sendPasswordResetLink">
+        <h1 class="mb-6 text-2xl font-semibold text-center text-gray-800">Forgot Password</h1>
+        <p class="mb-6 text-sm text-center text-gray-600">
+            Forgot your password? No problem. Just let us know your email address, and we will email you a password reset
+            link that will allow you to choose a new one.
+        </p>
+
+        <!-- Email Address -->
+        <div class="mb-4">
+            <label for="email" class="block mb-1 text-sm font-medium text-gray-700">Email</label>
+            <input wire:model="email" id="email" type="email"
+                class="block w-full px-4 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-teal-500 focus:border-teal-500
+                @error('email') border-red-500 @else border-gray-300 @enderror"
+                required autofocus autocomplete="username">
+            @error('email')
+                <span class="text-sm text-red-500">{{ $message }}</span>
+            @enderror
         </div>
-        <div class="row">
-            <div class="input-field col s12">
-                <i class="pt-2 material-icons prefix">mail_outline</i>
-                {{-- <input id="email" type="email">
-            <label for="email" class="center-align">Email</label> --}}
-                <x-input-label for="email" :value="__('Email')" />
-                <x-text-input wire:model="email" id="email" class="block w-full mt-1" type="email" name="email"
-                    required autofocus />
-                <x-input-error :messages="$errors->get('email')" class="mt-2" />
-            </div>
-        </div>
-        <div class="row">
-            <div class="input-field col s12">
-                <button type="submit"
-                    class="mb-1 btn waves-effect waves-light border-round gradient-45deg-purple-deep-orange col s12">Reset
-                    Password</button>
-            </div>
-        </div>
-        <div class="row">
-            <div class="input-field col s6 m6 l6">
-                <p class="margin medium-small"><a href="{{ route('login') }}">Login</a></p>
-            </div>
-            <div class="input-field col s6 m6 l6">
-                <p class="margin right-align medium-small"><a href="{{ route('register') }}">Register</a></p>
-            </div>
+
+        <!-- Submit Button -->
+        <button type="submit"
+            class="w-full py-2 text-white transition duration-200 bg-teal-600 rounded-md hover:bg-teal-700">
+            Send Password Reset Link
+        </button>
+
+        <!-- Links -->
+        <div class="flex justify-between mt-6 text-sm text-gray-600">
+            <a href="{{ route('login') }}" class="text-teal-600 hover:underline">Login</a>
+            <a href="{{ route('register') }}" class="text-teal-600 hover:underline">Register</a>
         </div>
     </form>
-    </div>
-
 </div>

@@ -1,180 +1,125 @@
 <!DOCTYPE html>
-<html class="loading" lang="en" data-textdirection="ltr">
-<!-- BEGIN: Head-->
 
-<head>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimal-ui">
-    <meta name="description"
-        content="Materialize is a Material Design Admin Template,It's modern, responsive and based on Material Design by Google.">
-    <meta name="keywords"
-        content="materialize, admin template, dashboard template, flat admin template, responsive admin template, eCommerce dashboard, analytic dashboard">
-    <meta name="author" content="ThemeSelect">
-    <meta name="csrf-token" content="{{ csrf_token() }}">
+<html
+  lang="en"
+  class="light-style layout-menu-fixed"
+  dir="ltr"
+  data-theme="theme-default"
+  data-assets-path="../assets/"
+  data-template="vertical-menu-template-free"
+>
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0"
+    />
+
     <title>{{ config('title', 'Cosplayer') }} - @yield('title')</title>
-    <link rel="apple-touch-icon"
-        href="{{ asset('template/assets/app-assets/images/favicon/apple-touch-icon-152x152.png') }}">
-    <link rel="shortcut icon" type="image/x-icon"
-        href="{{ asset('template/assets/app-assets/images/favicon/favicon-32x32.png') }}">
-    <link href="{{ asset('template/icon.css?family=Material+Icons') }}" rel="stylesheet">
-    <!-- BEGIN: VENDOR CSS-->
-    <link rel="stylesheet" type="text/css" href="{{ asset('template/assets/app-assets/vendors/vendors.min.css') }}">
-    <!-- END: VENDOR CSS-->
-    <!-- BEGIN: Page Level CSS-->
-    <link rel="stylesheet" type="text/css"
-        href="{{ asset('template/assets/app-assets/css/themes/vertical-dark-menu-template/materialize.min.css') }}">
-    <link rel="stylesheet" type="text/css"
-        href="{{ asset('template/assets/app-assets/css/themes/vertical-dark-menu-template/style.min.css') }}">
-    <link rel="stylesheet" type="text/css" href="{{ asset('template/assets/app-assets/css/pages/dashboard.min.css') }}">
-    <!-- END: Page Level CSS-->
-    <!-- BEGIN: Custom CSS-->
-    <link rel="stylesheet" type="text/css" href="{{ asset('template/assets/app-assets/css/custom/custom.css') }}">
-    <!-- END: Custom CSS-->
 
-    {{-- ini untuk custom table list fan bagi responsive mobile & tablet dan hide item --}}
-    <style>
-        .responsive-table-wrapper {
-            overflow-x: auto;
-            -webkit-overflow-scrolling: touch;
-        }
+    <meta name="description" content="" />
 
-        table.display.responsive-table {
-            width: 100%;
-            border-collapse: collapse;
-            border: 1px solid #ddd;
-        }
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap"
+      rel="stylesheet"
+    />
 
-        table.display.responsive-table th,
-        table.display.responsive-table td {
-            padding: 10px;
-            text-align: left;
-            border-bottom: 1px solid #ddd;
-            white-space: nowrap;
-            /* Prevent text wrapping */
-        }
+    <!-- Icons. Uncomment required icon fonts -->
+    <link rel="stylesheet" href="{{ asset('template/assets/vendor/fonts/boxicons.css') }}" />
 
-        /* Ensure table maintains horizontal scroll for tablets if content overflows */
-        @media screen and (max-width: 1024px) {
-            .responsive-table-wrapper {
-                overflow-x: scroll;
-            }
+    <!-- Core CSS -->
+    <link rel="stylesheet" href="{{ asset('template/assets/vendor/css/core.css') }}" class="template-customizer-core-css" />
+    <link rel="stylesheet" href="{{ asset('template/assets/vendor/css/theme-default.css') }}" class="template-customizer-theme-css" />
+    <link rel="stylesheet" href="{{ asset('template/assets/css/demo.css') }}" />
 
-            table.display.responsive-table {
-                font-size: 14px;
-                /* Adjust font size for readability */
-            }
+    <!-- Vendors CSS -->
+    <link rel="stylesheet" href="{{ asset('template/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css') }}" />
 
-            table.display.responsive-table th,
-            table.display.responsive-table td {
-                white-space: nowrap;
-                /* Keep text on one line for better layout */
-            }
-        }
+    <link rel="stylesheet" href="{{ asset('template/assets/vendor/libs/apex-charts/apex-charts.css') }}" />
 
-        /* For Mobile (max-width: 768px) */
-        @media screen and (max-width: 768px) {
-            table.display.responsive-table {
-                font-size: 14px;
-            }
+    <!-- Page CSS -->
 
-            table.display.responsive-table thead {
-                display: none;
-                /* Hide the table header for mobile */
-            }
+    <!-- Helpers -->
+    <script src="{{ asset('template/assets/vendor/js/helpers.js') }}"></script>
 
-            table.display.responsive-table tr {
-                display: block;
-                margin-bottom: 15px;
-                border-bottom: 1px solid #ddd;
-            }
+    <!--! Template customizer & Theme config files MUST be included after core stylesheets and helpers.js in the <head> section -->
+    <!--? Config:  Mandatory theme config file contain global vars & default theme options, Set your preferred theme option in this file.  -->
+    <script src="{{ asset('template/assets/js/config.js') }}"></script>
+  </head>
 
-            table.display.responsive-table td {
-                display: block;
-                text-align: left;
-                font-size: 14px;
-                position: relative;
-                padding: 10px;
-                border-bottom: 1px dotted #ccc;
-                white-space: normal;
-                /* Allow wrapping for long content */
-            }
+  <body>
+    <!-- Layout wrapper -->
+    <div class="layout-wrapper layout-content-navbar">
+      <div class="layout-container">
+        <!-- Menu -->
+        @include('layouts.partials.sidebar')
+        <!-- / Menu -->
 
-            table.display.responsive-table td::before {
-                content: attr(data-label);
-                position: absolute;
-                left: 10px;
-                top: 10px;
-                white-space: nowrap;
-                font-weight: bold;
-                text-align: left;
-            }
-        }
-    </style>
+        <!-- Layout container -->
+        <div class="layout-page">
+          <!-- Navbar -->
+          @include('layouts.partials.header')
+          <!-- / Navbar -->
 
-    @livewireStyles
-</head>
-<!-- END: Head-->
+          <!-- Content wrapper -->
+          <div class="content-wrapper">
+            <!-- Content -->
 
-<body
-    class="vertical-layout page-header-light vertical-menu-collapsible vertical-dark-menu preload-transitions 2-columns "
-    data-open="click" data-menu="vertical-dark-menu" data-col="2-columns">
-
-    <!-- BEGIN: Header-->
-    {{-- @include('layouts.partials.header_close') --}}
-    {{-- ini gunalivewire sebab ada logout tu dia xde kat route web yg biasa --}}
-    <livewire:layout.backend_header />
-    <!-- END: Header-->
-
-
-    <!-- BEGIN: SideNav-->
-    @include('layouts.partials.sidebar')
-    <!-- END: SideNav-->
-
-    <!-- BEGIN: Page Main-->
-    <div id="main">
-        <div class="row">
-            <div class="col s12">
-
-                <div class="container">
+            <div class="container-xxl flex-grow-1 container-p-y">
+                <div class="row">
                     @yield('content')
                 </div>
-                <div class="content-overlay"></div>
             </div>
+            <!-- / Content -->
+
+            <!-- Footer -->
+            <footer class="content-footer footer bg-footer-theme">
+              <div class="flex-wrap py-2 container-xxl d-flex justify-content-between flex-md-row flex-column">
+                <div class="mb-2 mb-md-0">
+                  ©
+                  <script>
+                    document.write(new Date().getFullYear());
+                  </script>
+                  , made with ❤️ by
+                  <a href="https://themeselection.com" target="_blank" class="footer-link fw-bolder">ThemeSelection</a>
+                </div>
+              </div>
+            </footer>
+            <!-- / Footer -->
+
+            <div class="content-backdrop fade"></div>
+          </div>
+          <!-- Content wrapper -->
         </div>
+        <!-- / Layout page -->
+      </div>
+
+      <!-- Overlay -->
+      <div class="layout-overlay layout-menu-toggle"></div>
     </div>
-    <!-- END: Page Main-->
+    <!-- / Layout wrapper -->
 
-    <!-- Theme Customizer -->
-    @include('layouts.partials.theme')
-    <!--/ Theme Customizer -->
+    <!-- Core JS -->
+    <!-- build:js assets/vendor/js/core.js -->
+    <script src="{{ asset('template/assets/vendor/libs/jquery/jquery.js') }}"></script>
+    <script src="{{ asset('template/assets/assets/vendor/libs/popper/popper.js') }}"></script>
+    <script src="{{ asset('template/assets/vendor/js/bootstrap.js') }}"></script>
+    <script src="{{ asset('template/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.js') }}"></script>
 
+    <script src="{{ asset('template/assets/vendor/js/menu.js') }}"></script>
+    <!-- endbuild -->
 
-    <!-- BEGIN: Footer-->
-    <footer class="page-footer footer footer-static footer-light navbar-border navbar-shadow">
-        <div class="footer-copyright">
-            <div class="container"><span>&copy; 2024 <a href="https://nizar-khan.com/" target="_blank">Nizar Khan</a>
-                    All rights reserved.</span><span class="right hide-on-small-only">Design and Developed by <a
-                        href="https://nizar-khan.com/">Nizar Khan</a></span></div>
-        </div>
-    </footer>
-    <!-- END: Footer-->
+    <!-- Vendors JS -->
+    <script src="{{ asset('template/assets/vendors/apexcharts/apexcharts.js') }}"></script>
 
+    <!-- Main JS -->
+    <script src="{{ asset('template/assets/js/main.js') }}"></script>
 
-    @livewireScripts
-    <!-- BEGIN VENDOR JS-->
-    <script src="{{ asset('template/assets/app-assets/js/vendors.min.js') }}"></script>
-    <!-- BEGIN VENDOR JS-->
-    <!-- BEGIN PAGE VENDOR JS-->
-    <script src="{{ asset('template/assets/app-assets/vendors/chartjs/chart.min.js') }}"></script>
-    <script src="{{ asset('template/assets/app-assets/vendors/sparkline/jquery.sparkline.min.js') }}"></script>
-    <!-- END PAGE VENDOR JS-->
-    <!-- BEGIN THEME  JS-->
-    <script src="{{ asset('template/assets/app-assets/js/plugins.min.js') }}"></script>
-    <script src="{{ asset('template/assets/app-assets/js/search.min.js') }}"></script>
-    <script src="{{ asset('template/assets/app-assets/js/custom/custom-script.min.js') }}"></script>
-    <script src="{{ asset('template/assets/app-assets/js/scripts/customizer.min.js') }}"></script>
-    <!-- END THEME  JS-->
-</body>
+    <!-- Page JS -->
+    <script src="{{ asset('template/assets/js/dashboards-analytics.js') }}"></script>
 
+  </body>
 </html>

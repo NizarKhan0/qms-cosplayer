@@ -1,48 +1,55 @@
 <?php
 
 use Livewire\Volt\Component;
-use App\Models\Fan;
 use App\Models\FanQueue;
 use App\Models\Cosplayer;
 use Illuminate\Support\Facades\Auth;
-use Filament\Notifications\Notification;
 use Livewire\Attributes\On;
-use Livewire\WithPagination;
 
 new class extends Component {
-    use WithPagination;
 
-    public $search = '';
+    public $cosplayerId;
+    public $cosplayerFans = [];
+    public $allFans = [];
+    public $searchName = '';
+    public $searchQueueNumber = '';
+    public $searchStatus = '';
 
-    #[On('fanRegistered')]
-    public function reloadFans()
+    public function mount()
     {
-        return $this->getFanQueues();
+        //All fan if admin role_id = 1
+        if (Auth::user()->role_id == 1) {
+            $this->allFans = FanQueue::with('fan')->get();
+        };
+        // Get cosplayer ID through authenticated user
+        $this->cosplayerId = Cosplayer::where('user_id', Auth::user()->id)->first()->id;
+
+        // Load fans related to the cosplayer
+        $this->loadCosplayerFans();
     }
 
-    public function getFanQueues()
+    public function loadCosplayerFans()
     {
-        $query = FanQueue::with('fan', 'cosplayer');
+        // Load fans related to the cosplayer
+        $query = FanQueue::with('fan')->where('cosplayer_id', $this->cosplayerId);
 
-        if (!empty($this->search)) {
-            $query->where(function ($q) {
-                $q->whereHas('fan', function ($subQuery) {
-                    $subQuery->where('name', 'like', '%' . $this->search . '%');
-                })
-                    ->orWhere('queue_number', 'like', '%' . $this->search . '%')
-                    ->orWhere('status', 'like', '%' . $this->search . '%')
-                    ->orWhereHas('cosplayer', function ($subQuery) {
-                        $subQuery->where('cosplayer_name', 'like', '%' . $this->search . '%');
-                    });
+        // Apply search filters
+        if (!empty($this->searchName)) {
+            $query->whereHas('fan', function ($q) {
+                $q->where('name', 'like', '%' . $this->searchName . '%');
             });
         }
 
-        if (Auth::user()->role_id === 1) {
-            return $query->paginate(8);
-        } else {
-            $cosplayerId = Auth::user()->id;
-            return $query->where('cosplayer_id', $cosplayerId)->paginate(8);
+        if (!empty($this->searchQueueNumber)) {
+            $query->where('queue_number', $this->searchQueueNumber);
         }
+
+        if (!empty($this->searchStatus)) {
+            $query->where('status', $this->searchStatus);
+        }
+
+        $this->cosplayerFans = $query->get();
+
     }
 
     public function updateStatus($fanQueueId, $status)
@@ -53,133 +60,107 @@ new class extends Component {
             $fanQueue->status = $status;
             $fanQueue->save();
             session()->flash('success', 'Status updated successfully!');
+            $this->loadCosplayerFans(); // Refresh data after update
         }
     }
 
-    public function updatingSearch()
+    public function updated($propertyName)
     {
-        $this->resetPage();
+        // Reload fans when a search filter changes
+        if (in_array($propertyName, ['searchName', 'searchQueueNumber', 'searchStatus'])) {
+            $this->loadCosplayerFans();
+        }
     }
-}; ?>
+};
+?>
 
 <div>
-    <div wire:poll="reloadFans" class="row">
-        <div>
-            @if (session()->has('success'))
-                <div class="alert alert-success">
-                    <h5 class="green lighten-4">{{ session('success') }}</h5>
-                </div>
-            @endif
-            @if (session()->has('error'))
-                <div class="alert alert-danger">
-                    <h5 class="red lighten-4">{{ session('error') }}</h5>
-                </div>
-            @endif
-        </div>
-
-        <div class="col s12">
-            <!-- Search and Reset Button Row -->
-            <div class="row">
-                <div class="col s12">
-                    <div class="input-field">
-                        <input type="text" wire:model.live="search"
-                            placeholder="Search by Name, Queue Number, or Status" class="validate">
-                    </div>
-                </div>
+    <div wire:poll="loadCosplayerFans">
+        <!-- Success Message -->
+        @if (session()->has('success'))
+            <div class="alert alert-success">
+                {{ session('success') }}
             </div>
+        @endif
 
-            <div class="card">
-                <div class="card-content">
-                    <div class="row">
-                        <div class="col s12">
-                            @php
-                                $fanQueues = $this->getFanQueues();
-                            @endphp
-                            <div class="responsive-table-wrapper">
-                                <table id="myTable" class="display responsive-table">
-                                    <thead>
-                                        <tr>
-                                            <th>Name</th>
-                                            <th>Queue Number</th>
-                                            <th>Status</th>
-                                            <th class="cosplayer-name">Cosplayer Name</th>
-                                            <th>Action</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @foreach ($fanQueues as $fan)
-                                            <tr>
-                                                <td>{{ $fan->fan->name }}</td>
-                                                <td>{{ $fan->queue_number }}</td>
-                                                <td>
-                                                    @if ($fan->status === 'Queue Now')
-                                                        <span class="chip blue white-text">Queue Now</span>
-                                                    @elseif ($fan->status === 'Complete')
-                                                        <span class="chip green white-text">Complete</span>
-                                                    @else
-                                                        <span class="chip red white-text">Pending</span>
-                                                    @endif
-                                                </td>
-                                                <td class="cosplayer-name">{{ $fan->cosplayer->cosplayer_name }}</td>
-                                                <td>
-                                                    <select
-                                                        wire:change="updateStatus({{ $fan->id }}, $event.target.value)"
-                                                        class="browser-default">
-                                                        <option value="" disabled selected>Change Status</option>
-                                                        <option value="Queue Now"
-                                                            {{ $fan->status === 'Queue Now' ? 'selected' : '' }}>
-                                                            Queue Now
-                                                        </option>
-                                                        <option value="Complete"
-                                                            {{ $fan->status === 'Complete' ? 'selected' : '' }}>
-                                                            Complete
-                                                        </option>
-                                                        <option value="Pending"
-                                                            {{ $fan->status === 'Pending' ? 'selected' : '' }}>Pending
-                                                        </option>
-                                                    </select>
-                                                </td>
-                                            </tr>
-                                        @endforeach
-                                    </tbody>
-                                </table>
-                            </div>
-
-                            <!-- Pagination Links -->
-                            <div class="pagination center-align">
-                                @if ($fanQueues->lastPage() > 1)
-                                    <ul class="pagination">
-                                        @if ($fanQueues->onFirstPage())
-                                            <li class="disabled"><a href="#!"><i
-                                                        class="material-icons">chevron_left</i></a></li>
-                                        @else
-                                            <li class="waves-effect"><a wire:click="previousPage" href="#!"><i
-                                                        class="material-icons">chevron_left</i></a></li>
-                                        @endif
-
-                                        @foreach (range(1, $fanQueues->lastPage()) as $page)
-                                            @if ($page == $fanQueues->currentPage())
-                                                <li class="active"><a href="#!">{{ $page }}</a></li>
-                                            @else
-                                                <li class="waves-effect"><a wire:click="gotoPage({{ $page }})"
-                                                        href="#!">{{ $page }}</a></li>
-                                            @endif
-                                        @endforeach
-
-                                        @if ($fanQueues->hasMorePages())
-                                            <li class="waves-effect"><a wire:click="nextPage" href="#!"><i
-                                                        class="material-icons">chevron_right</i></a></li>
-                                        @else
-                                            <li class="disabled"><a href="#!"><i
-                                                        class="material-icons">chevron_right</i></a></li>
-                                        @endif
-                                    </ul>
-                                @endif
-                            </div>
-                        </div>
+        <!-- Search Filters -->
+        <div class="mb-4 card">
+            <h5 class="card-header">Search Fans</h5>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4">
+                        <input type="text" wire:model.live.debounce.250ms="searchName" class="form-control"
+                            placeholder="Search by Fan Name">
+                    </div>
+                    <div class="col-md-4">
+                        <input type="text" wire:model.live.debounce.250ms="searchQueueNumber" class="form-control"
+                            placeholder="Search by Queue Number">
+                    </div>
+                    <div class="col-md-4">
+                        <select wire:model.live.debounce.250ms="searchStatus" class="form-control">
+                            <option value="">Select Status</option>
+                            <option value="Pending">Pending</option>
+                            <option value="Queue Now">Queue Now</option>
+                            <option value="Complete">Complete</option>
+                        </select>
                     </div>
                 </div>
             </div>
         </div>
+
+        <!-- Bordered Table -->
+        <div class="card">
+            <h5 class="card-header">List Fans</h5>
+            <div class="card-body">
+                <div class="table-responsive text-nowrap">
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>SL</th>
+                                <th>Fan Name</th>
+                                <th>Queue Number</th>
+                                <th>Status</th>
+                                <th>Cosplayer Name</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($cosplayerFans as $fans)
+                                <tr>
+                                    <td>{{ $loop->iteration }}</td>
+                                    <td>{{ $fans->fan->name }}</td>
+                                    <td>{{ $fans->queue_number }}</td>
+                                    @if ($fans->status === 'Pending')
+                                        <td><span class="badge bg-label-danger me-1">Pending</span></td>
+                                    @elseif ($fans->status === 'Queue Now')
+                                        <td><span class="badge bg-label-info me-1">Queue Now</span></td>
+                                    @else
+                                        <td><span class="badge bg-label-success me-1">Complete</span></td>
+                                    @endif
+                                    <td>{{ $fans->cosplayer->cosplayer_name }}</td>
+                                    <td>
+                                        <select wire:change="updateStatus({{ $fans->id }}, $event.target.value)"
+                                            class="browser-default">
+                                            <option value="" disabled selected>Change Status</option>
+                                            <option value="Queue Now" {{ $fans->status === 'Queue Now' ? 'selected' : '' }}>
+                                                Queue Now
+                                            </option>
+                                            <option value="Complete" {{ $fans->status === 'Complete' ? 'selected' : '' }}>
+                                                Complete
+                                            </option>
+                                            <option value="Pending" {{ $fans->status === 'Pending' ? 'selected' : '' }}>
+                                                Pending
+                                            </option>
+                                        </select>
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <!--/ Bordered Table -->
     </div>
 </div>
+

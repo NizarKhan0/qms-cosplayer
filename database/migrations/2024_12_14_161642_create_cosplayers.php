@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->string('cosplayer_name')->nullable();
+            $table->string('slug')->unique(); // Remove the "after" clause
             $table->timestamps();
         });
     }
