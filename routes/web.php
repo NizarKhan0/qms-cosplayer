@@ -1,29 +1,26 @@
 <?php
 
-use App\Http\Controllers\ManageUserController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\FanController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\ManageUserController;
+use App\Http\Middleware\SuperAdminRoleMiddleware;
 
 //Frontend Homepage
 Route::get('/', [HomeController::class, 'index'])->name('home');
-Route::get('/coser-{cosplayerSlug}', [FanController::class, 'displayFans'])->name('fans');
-
-//Backend
-// Route::view('dashboard', 'backend.dashboard')
-//     ->middleware(['auth', 'verified'])
-//     ->name('dashboard');
-
+Route::get('/cos/{cosplayerSlug}', [FanController::class, 'displayFans'])->name('fans');
 
 Route::middleware(['auth'])->group(function () {
 
     //dashboard
     Route::get('/dashboard', [HomeController::class, 'dashboard'])->name('dashboard');
 
-    Route::get('/all-users', [ManageUserController::class, 'allUsers'])->name('all-users');
-    Route::get('/all-cosplayers', [ManageUserController::class, 'allCosplayers'])->name('all-cosplayers');
+    //fan management
     Route::get('/all-fans', [ManageUserController::class, 'allFans'])->name('all-fans');
-
+    //user management
+    Route::get('/all-users', [ManageUserController::class, 'allUsers'])->name('all-users')->middleware('superAdmin');
+    //cosplayer management
+    Route::get('/all-cosplayers', [ManageUserController::class, 'allCosplayers'])->name('all-cosplayers')->middleware('superAdmin');
 });
 
 

@@ -5,8 +5,10 @@ use App\Models\FanQueue;
 use App\Models\Cosplayer;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\On;
+use Livewire\WithPagination;
 
 new class extends Component {
+    use WithPagination;
 
     public $cosplayerId;
     public $cosplayerFans = [];
@@ -14,26 +16,21 @@ new class extends Component {
     public $searchName = '';
     public $searchQueueNumber = '';
     public $searchStatus = '';
+    public $perPage = 5; // Number of items per page
 
     public function mount()
     {
-        //All fan if admin role_id = 1
-        if (Auth::user()->role_id == 1) {
-            $this->allFans = FanQueue::with('fan')->get();
-        };
-        // Get cosplayer ID through authenticated user
         $this->cosplayerId = Cosplayer::where('user_id', Auth::user()->id)->first()->id;
-
-        // Load fans related to the cosplayer
-        $this->loadCosplayerFans();
     }
 
     public function loadCosplayerFans()
     {
-        // Load fans related to the cosplayer
-        $query = FanQueue::with('fan')->where('cosplayer_id', $this->cosplayerId);
+        if (Auth::user()->role_id === 1) {
+            $query = FanQueue::with(['fan', 'cosplayer']);
+        } else {
+            $query = FanQueue::with('fan')->where('cosplayer_id', $this->cosplayerId);
+        }
 
-        // Apply search filters
         if (!empty($this->searchName)) {
             $query->whereHas('fan', function ($q) {
                 $q->where('name', 'like', '%' . $this->searchName . '%');
@@ -48,8 +45,7 @@ new class extends Component {
             $query->where('status', $this->searchStatus);
         }
 
-        $this->cosplayerFans = $query->get();
-
+        return $query->orderBy('created_at', 'desc')->paginate($this->perPage);
     }
 
     public function updateStatus($fanQueueId, $status)
@@ -60,22 +56,25 @@ new class extends Component {
             $fanQueue->status = $status;
             $fanQueue->save();
             session()->flash('success', 'Status updated successfully!');
-            $this->loadCosplayerFans(); // Refresh data after update
         }
     }
 
     public function updated($propertyName)
     {
-        // Reload fans when a search filter changes
         if (in_array($propertyName, ['searchName', 'searchQueueNumber', 'searchStatus'])) {
-            $this->loadCosplayerFans();
+            $this->resetPage(); // Reset to first page when search filters change
         }
+    }
+
+    public function paginationView()
+    {
+        return 'vendor.livewire.bootstrap'; // Use Bootstrap pagination view
     }
 };
 ?>
 
 <div>
-    <div wire:poll="loadCosplayerFans">
+    <div wire:poll="$refresh">
         <!-- Success Message -->
         @if (session()->has('success'))
             <div class="alert alert-success">
@@ -88,15 +87,15 @@ new class extends Component {
             <h5 class="card-header">Search Fans</h5>
             <div class="card-body">
                 <div class="row">
-                    <div class="col-md-4">
+                    <div class="mb-3 col-12 col-md-4">
                         <input type="text" wire:model.live.debounce.250ms="searchName" class="form-control"
                             placeholder="Search by Fan Name">
                     </div>
-                    <div class="col-md-4">
+                    <div class="mb-3 col-12 col-md-4">
                         <input type="text" wire:model.live.debounce.250ms="searchQueueNumber" class="form-control"
                             placeholder="Search by Queue Number">
                     </div>
-                    <div class="col-md-4">
+                    <div class="mb-3 col-12 col-md-4">
                         <select wire:model.live.debounce.250ms="searchStatus" class="form-control">
                             <option value="">Select Status</option>
                             <option value="Pending">Pending</option>
@@ -107,6 +106,7 @@ new class extends Component {
                 </div>
             </div>
         </div>
+
 
         <!-- Bordered Table -->
         <div class="card">
@@ -125,9 +125,10 @@ new class extends Component {
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach ($cosplayerFans as $fans)
+                            @foreach ($this->loadCosplayerFans() as $fans)
                                 <tr>
-                                    <td>{{ $loop->iteration }}</td>
+                                    <td>{{ ($this->loadCosplayerFans()->currentPage() - 1) * $this->perPage + $loop->iteration }}
+                                    </td>
                                     <td>{{ $fans->fan->name }}</td>
                                     <td>{{ $fans->queue_number }}</td>
                                     @if ($fans->status === 'Pending')
@@ -142,25 +143,28 @@ new class extends Component {
                                         <select wire:change="updateStatus({{ $fans->id }}, $event.target.value)"
                                             class="browser-default">
                                             <option value="" disabled selected>Change Status</option>
-                                            <option value="Queue Now" {{ $fans->status === 'Queue Now' ? 'selected' : '' }}>
-                                                Queue Now
-                                            </option>
-                                            <option value="Complete" {{ $fans->status === 'Complete' ? 'selected' : '' }}>
-                                                Complete
-                                            </option>
+                                            <option value="Queue Now"
+                                                {{ $fans->status === 'Queue Now' ? 'selected' : '' }}>Queue Now</option>
+                                            <option value="Complete"
+                                                {{ $fans->status === 'Complete' ? 'selected' : '' }}>Complete</option>
                                             <option value="Pending" {{ $fans->status === 'Pending' ? 'selected' : '' }}>
-                                                Pending
-                                            </option>
+                                                Pending</option>
                                         </select>
                                     </td>
                                 </tr>
                             @endforeach
                         </tbody>
                     </table>
+
+                    <!-- Pagination Links -->
+                    <div class="mt-4 d-flex justify-content-center">
+                        {{ $this->loadCosplayerFans()->links() }}
+                    </div>
+
                 </div>
             </div>
         </div>
         <!--/ Bordered Table -->
+
     </div>
 </div>
-

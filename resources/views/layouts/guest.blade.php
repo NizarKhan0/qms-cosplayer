@@ -17,8 +17,9 @@
         <div class="w-full px-6 py-4 overflow-hidden bg-white shadow-md sm:max-w-md sm:rounded-lg">
             <!-- Back Button (aligned to the right) -->
             <div class="flex justify-end mb-4">
-                <a href="{{ url('/') }}" class="text-blue-500 hover:text-blue-700">
-                    &larr; Back to Home
+                <a wire:navigate href="{{ url('/') }}"
+                    class="px-4 py-2 text-white bg-blue-500 rounded-md hover:bg-blue-700">
+                    Back
                 </a>
             </div>
 
