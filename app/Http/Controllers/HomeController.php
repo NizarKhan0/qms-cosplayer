@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\FanQueue;
 use App\Models\Cosplayer;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Session;
 
 class HomeController extends Controller
 {
@@ -15,12 +17,31 @@ class HomeController extends Controller
         $cosplayers = Cosplayer::whereHas('user', function ($query) {
             $query->where('role_id', 3);
         })
-        ->withCount(['fanQueues' => function ($query) {
-            $query->where('status', 'Pending');
-        }])
-        ->get();
+            ->withCount(['fanQueues' => function ($query) {
+                $query->where('status', 'Pending');
+            }])
+            ->get();
 
-        return view('index', compact('cosplayers'));
+        // Get all session keys for fan queues
+        $queueStatuses = collect($cosplayers)->mapWithKeys(function ($cosplayer) {
+            $sessionKey = "fanqueue{$cosplayer->id}";
+            $queueData = Session::get($sessionKey);
+
+            if ($queueData) {
+                // Check if the queue still exists in database
+                $fanQueue = FanQueue::where('fan_id', $queueData['fan_id'])
+                    ->where('cosplayer_id', $cosplayer->id)
+                    ->whereIn('status', ['Pending', 'Queue Now'])
+                    ->exists();
+
+                return [$cosplayer->id => $fanQueue];
+            }
+
+            return [$cosplayer->id => false];
+        });
+        // dd($queueStatuses);
+
+        return view('index', compact('cosplayers', 'queueStatuses'));
     }
 
     // public function index()
@@ -41,5 +62,4 @@ class HomeController extends Controller
 
         return view('backend.dashboard', compact('cosplayers'));
     }
-
 }

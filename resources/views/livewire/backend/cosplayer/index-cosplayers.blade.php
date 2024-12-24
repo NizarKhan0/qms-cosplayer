@@ -40,50 +40,52 @@ new class extends Component {
 };
 ?>
 
+<div>
+    <div wire:poll.15s="$refresh" class="card">
+        <h5 class="card-header">Cosplayer Queue Records (clear by manual if needed)</h5>
+        <div class="card-body">
+            <!-- Success and Error Alerts -->
+            <div>
+                @if (session()->has('success'))
+                    <div class="alert alert-success">
+                        <h5 class="green lighten-4">{{ session('success') }}</h5>
+                    </div>
+                @endif
+                @if (session()->has('error'))
+                    <div class="alert alert-danger">
+                        <h5 class="red lighten-4">{{ session('error') }}</h5>
+                    </div>
+                @endif
+            </div>
 
-<div class="card">
-    <h5 class="card-header">Cosplayer Queue Records (clear by manual if needed)</h5>
-    <div class="card-body">
-        <!-- Success and Error Alerts -->
-        <div>
-            @if (session()->has('success'))
-                <div class="alert alert-success">
-                    <h5 class="green lighten-4">{{ session('success') }}</h5>
-                </div>
-            @endif
-            @if (session()->has('error'))
-                <div class="alert alert-danger">
-                    <h5 class="red lighten-4">{{ session('error') }}</h5>
-                </div>
-            @endif
-        </div>
-
-        <!-- Cosplayer Records Table -->
-        <div class="table-responsive text-nowrap">
-            <table class="table table-bordered">
-                <thead>
-                    <tr>
-                        <th>Cosplayer Name</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach ($cosplayers as $cosplayer)
+            <!-- Cosplayer Records Table -->
+            <div class="table-responsive text-nowrap">
+                <table class="table table-bordered">
+                    <thead>
                         <tr>
-                            <td>{{ $cosplayer->cosplayer_name }}</td>
-                            <td>
-                                @if (Auth::user()->role_id === 1)
-                                    <button wire:click="clearAllRecords({{ $cosplayer->id }})" class="btn btn-danger">
-                                        <i class="bx bx-trash"></i>
-                                    </button>
-                                @else
-                                    <span class="text-muted">No Permission</span>
-                                @endif
-                            </td>
+                            <th>Cosplayer Name</th>
+                            <th>Actions</th>
                         </tr>
-                    @endforeach
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        @foreach ($cosplayers as $cosplayer)
+                            <tr>
+                                <td>{{ $cosplayer->cosplayer_name }}</td>
+                                <td>
+                                    @if (Auth::user()->role_id === 1)
+                                        <button wire:click="clearAllRecords({{ $cosplayer->id }})"
+                                            class="btn btn-danger">
+                                            <i class="bx bx-trash"></i>
+                                        </button>
+                                    @else
+                                        <span class="text-muted">No Permission</span>
+                                    @endif
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 </div>

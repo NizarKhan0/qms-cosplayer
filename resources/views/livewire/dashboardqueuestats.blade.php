@@ -111,7 +111,7 @@ new class extends Component {
         </div>
     @endif
 
-    <div wire:poll.1s="pollQueueStatus"> <!-- Set polling interval (e.g., 1s) -->
+    <div wire:poll.15s="pollQueueStatus"> <!-- Set polling interval (e.g., 1s) -->
         <div class="text-center row">
             <div class="mb-4 col-lg-4 col-md-6 col-12">
                 <div class="card border-danger">

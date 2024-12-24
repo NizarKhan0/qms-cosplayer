@@ -39,7 +39,7 @@ new class extends Component {
     }
 }; ?>
 
-<div wire:poll="reloadUsers">
+<div wire:poll.15s="reloadUsers">
     <!-- Success Message -->
     @if (session()->has('success'))
         <div class="alert alert-success">

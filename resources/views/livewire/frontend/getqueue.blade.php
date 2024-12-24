@@ -129,7 +129,8 @@ new class extends Component {
 }; ?>
 
 <div class="max-w-2xl p-4 mx-auto">
-    <div wire:poll="reloadFans" class="space-y-6">
+    <div wire:poll.keep-alive="reloadFans" class="space-y-6">
+        {{-- <div wire:poll.1s="reloadFans" class="space-y-6"> --}}
         <!-- Title Section -->
         <div class="flex items-center justify-between p-4 bg-white rounded-lg shadow-md">
             <!-- Heading and Description -->

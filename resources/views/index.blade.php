@@ -75,29 +75,10 @@
                             </div>
                         </div>
 
-                        {{-- Action Button --}}
-                        @php
-                            $fanQueues = App\Models\FanQueue::whereHas('fan', function ($query) use ($cosplayer) {
-                                $query->whereIn('fan_queues.status', ['Pending', 'Queue Now']);
-                                $query->where('fan_queues.cosplayer_id', $cosplayer->id);
-                            })->exists();
-                        @endphp
-
-                        {{-- <a
-                            href="{{ route('fans', ['cosplayerSlug' => $cosplayer->slug]) }}"
-                            class="w-full px-4 py-2 text-sm font-semibold text-white rounded-md text-center transition-all duration-200
-                                {{ $fanQueues
-                                    ? 'bg-teal-600 hover:bg-teal-700'
-                                    : 'bg-purple-600 hover:bg-purple-700'
-                                }}"
-                        >
-                            {{ $fanQueues ? 'See Your Queue' : 'Join Queue' }}
-                        </a> --}}
-
                         <a wire:navigate href="{{ route('fans', ['cosplayerSlug' => $cosplayer->slug]) }}"
                             class="w-full px-4 py-2 text-sm font-semibold text-white rounded-md text-center transition-all duration-200
-        {{ $fanQueues ? 'bg-teal-600 hover:bg-teal-700' : 'bg-teal-400 hover:bg-teal-500' }}">
-                            {{ $fanQueues ? 'See Your Queue' : 'Join Queue' }}
+                        {{ $queueStatuses[$cosplayer->id] ? 'bg-teal-600 hover:bg-teal-700' : 'bg-teal-400 hover:bg-teal-500' }}">
+                            {{ $queueStatuses[$cosplayer->id] ? 'See Your Queue' : 'Join Queue' }}
                         </a>
 
                     </div>

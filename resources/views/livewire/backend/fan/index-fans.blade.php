@@ -74,7 +74,8 @@ new class extends Component {
 ?>
 
 <div>
-    <div wire:poll="$refresh">
+    {{-- <div wire:poll.5s="$refresh"> --}}
+    <div wire:poll.keep-alive="$refresh">
         <!-- Success Message -->
         @if (session()->has('success'))
             <div class="alert alert-success">
