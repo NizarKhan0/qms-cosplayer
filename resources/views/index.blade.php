@@ -1,120 +1,105 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<html lang="en">
 
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Cosplayer Queue System</title>
-    <link rel="preconnect" href="https://fonts.bunny.net">
-    <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CosQueue</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 </head>
 
-<body class="flex flex-col min-h-screen font-sans antialiased bg-gray-50">
-    <!-- Navbar -->
-    <nav class="bg-white border-b border-gray-200">
-        <div class="container px-6 py-4 mx-auto">
-            <div class="flex items-center justify-between">
-                <div class="flex items-center">
-                    <a href="/" class="text-xl font-bold text-gray-800">CosQueue</a>
-                </div>
-                <div class="flex items-center space-x-2">
-                    <a wire:navigate href="{{ route('register') }}"
-                        class="px-6 py-2 text-sm font-medium text-white transition-colors duration-200 bg-teal-600 rounded-md hover:bg-teal-700">
-                        Register
-                    </a>
-                    <a wire:navigate href="{{ route('login') }}"
-                        class="px-6 py-2 text-sm font-medium text-teal-600 transition-colors duration-200 border border-teal-600 rounded-md hover:bg-teal-50">
-                        Login
-                    </a>
-                </div>
+<body class="min-h-screen bg-gradient-to-b from-slate-50 to-slate-100">
+    <!-- Hero Section -->
+    <section class="relative flex items-center justify-center min-h-screen overflow-hidden">
+        <div class="absolute inset-0 bg-gradient-to-r from-blue-600 to-purple-600 opacity-90"></div>
+        <div class="relative z-10 max-w-4xl px-4 mx-auto text-center">
+            <h1 class="mb-6 text-5xl font-bold leading-tight text-white md:text-7xl">
+                Transform Your Fan Experience with CosQueue
+            </h1>
+            <p class="mb-8 text-xl md:text-2xl text-white/90">
+                The ultimate queue management system for cosplayers who value their fans' time
+            </p>
+            <a wire:navigate href="{{ route('mainCosplayers') }}"
+                class="relative inline-flex items-center px-8 py-4 text-lg font-semibold text-blue-600 transition-all duration-300 bg-white rounded-full group hover:shadow-xl hover:scale-105">
+                Get Started
+                <span class="ml-2 transition-transform transform group-hover:translate-x-1">→</span>
+            </a>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="px-6 py-16">
+        <h2 class="mb-10 text-4xl font-bold text-center">How It Works</h2>
+        <div class="grid max-w-6xl gap-8 mx-auto sm:grid-cols-2 lg:grid-cols-3">
+            <!-- Step 1 -->
+            <div
+                class="p-6 text-center transition-all duration-300 bg-white rounded-lg shadow-lg hover:shadow-xl hover:scale-105">
+                <i class="mb-4 text-4xl text-gradient-to-r from-blue-600 to-purple-600 fas fa-user-plus"></i>
+                <h3 class="mb-2 text-xl font-semibold">Create Your Profile</h3>
+                <p>Register as a cosplayer and set up your personal profile to showcase your name and persona.</p>
+            </div>
+
+            <!-- Step 2 -->
+            <div
+                class="p-6 text-center transition-all duration-300 bg-white rounded-lg shadow-lg hover:shadow-xl hover:scale-105">
+                <i class="mb-4 text-4xl text-gradient-to-r from-blue-600 to-purple-600 fas fa-list-alt"></i>
+                <h3 class="mb-2 text-xl font-semibold">Set Up Your Queue</h3>
+                <p>Allow fans to join your queue online, view their position, and prepare for their turn seamlessly.</p>
+            </div>
+
+            <!-- Step 3 -->
+            <div
+                class="p-6 text-center transition-all duration-300 bg-white rounded-lg shadow-lg hover:shadow-xl hover:scale-105">
+                <i class="mb-4 text-4xl text-gradient-to-r from-blue-600 to-purple-600 fas fa-users"></i>
+                <h3 class="mb-2 text-xl font-semibold">Engage With Fans</h3>
+                <p>Track your fan interactions, keep the queue moving smoothly, and create memorable experiences.</p>
             </div>
         </div>
-    </nav>
+    </section>
 
-    <!-- Main Content -->
-    <main class="container flex-grow px-4 py-8 mx-auto">
-        <h1 class="mb-2 text-2xl font-bold text-center text-gray-800">Cosplayer Queue System</h1>
-        <p class="mb-12 text-center text-gray-600">Select a cosplayer to join their queue</p>
-
-        @if (session()->has('success'))
-            <div id="success-message"
-                class="relative px-4 py-3 mb-4 border rounded-md text-emerald-700 bg-emerald-50 border-emerald-200"
-                role="alert">
-                <span class="block sm:inline">{{ session('success') }}</span>
+    <!-- Benefits Section -->
+    <section class="px-6 py-16 bg-gray-100">
+        <h2 class="mb-10 text-3xl font-bold text-center">Why Use CosQueue?</h2>
+        <div class="grid max-w-6xl gap-8 mx-auto md:grid-cols-2 lg:grid-cols-4">
+            <div class="p-6 text-center bg-white rounded-lg shadow-lg">
+                <i class="mb-4 text-4xl text-gradient-to-r from-blue-600 to-purple-600 fas fa-clock"></i>
+                <h3 class="mb-2 text-xl font-semibold">Time Efficiency</h3>
+                <p>Spend less time organizing and more time connecting with your fans.</p>
             </div>
-        @endif
 
-        <div class="grid grid-cols-1 gap-4 p-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-            @foreach ($cosplayers as $cosplayer)
-                <div
-                    class="group relative flex flex-col h-[160px] overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm transition-all duration-300 hover:shadow-md hover:-translate-y-0.5">
-                    {{-- Background Gradient Overlay --}}
-                    <div class="absolute inset-0 opacity-50 bg-gradient-to-b from-purple-50 via-white to-teal-50"></div>
+            <div class="p-6 text-center bg-white rounded-lg shadow-lg">
+                <i class="mb-4 text-4xl text-gradient-to-r from-blue-600 to-purple-600 fas fa-calendar-alt"></i>
+                <h3 class="mb-2 text-xl font-semibold">Better Organization</h3>
+                <p>Maintain an organized flow and ensure every fan has their moment.</p>
+            </div>
 
-                    {{-- Content Container --}}
-                    <div class="relative flex flex-col items-center justify-between h-full p-4">
-                        {{-- Header Section --}}
-                        <div class="space-y-3 text-center">
-                            <h2 class="text-lg font-bold text-gray-800 transition-colors group-hover:text-teal-600">
-                                {{ $cosplayer->cosplayer_name }}
-                            </h2>
+            <div class="p-6 text-center bg-white rounded-lg shadow-lg">
+                <i class="mb-4 text-4xl text-gradient-to-r from-blue-600 to-purple-600 fas fa-handshake"></i>
+                <h3 class="mb-2 text-xl font-semibold">Personalized Interaction</h3>
+                <p>Let fans feel valued with a system tailored to their needs.</p>
+            </div>
 
-                            {{-- Queue Counter --}}
-                            <div
-                                class="inline-flex items-center px-3 py-1.5 bg-gray-50 rounded-md border border-gray-100">
-                                <svg class="w-4 h-4 mr-2 text-teal-600" fill="none" stroke="currentColor"
-                                    viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                                </svg>
-                                <span class="text-sm font-medium text-gray-600">
-                                    Queue: {{ $cosplayer->fan_queues_count ?? 0 }}
-                                </span>
-                            </div>
-                        </div>
-
-                        <a wire:navigate href="{{ route('fans', ['cosplayerSlug' => $cosplayer->slug]) }}"
-                            class="w-full px-4 py-2 text-sm font-semibold text-white rounded-md text-center transition-all duration-200
-                        {{ $queueStatuses[$cosplayer->id] ? 'bg-teal-600 hover:bg-teal-700' : 'bg-teal-400 hover:bg-teal-500' }}">
-                            {{ $queueStatuses[$cosplayer->id] ? 'See Your Queue' : 'Join Queue' }}
-                        </a>
-
-                    </div>
-                </div>
-            @endforeach
-        </div>
-
-    </main>
-
-    <!-- Footer -->
-    <footer class="bg-white border-t border-gray-200">
-        <div class="container px-6 py-4 mx-auto">
-            <div class="flex flex-col items-center justify-between md:flex-row">
-                <div class="text-sm text-gray-600">
-                    © 2024 CosQueue.
-                </div>
-                <div class="text-sm text-gray-600">
-                    Created by <a href="https://nizar-khan.com" target="_blank"
-                        class="font-medium text-teal-600 hover:text-teal-700">@NizarKhan</a>
-                </div>
+            <div class="p-6 text-center bg-white rounded-lg shadow-lg">
+                <i class="mb-4 text-4xl text-gradient-to-r from-blue-600 to-purple-600 fas fa-sync-alt"></i>
+                <h3 class="mb-2 text-xl font-semibold">Real-Time Updates</h3>
+                <p>Stay informed of your queue status anytime, anywhere.</p>
             </div>
         </div>
-    </footer>
+    </section>
 
-    @if (session()->has('success'))
-        <script>
-            window.onload = function() {
-                const successMessage = document.getElementById('success-message');
-                if (successMessage) {
-                    setTimeout(() => {
-                        successMessage.style.display = 'none';
-                    }, 5000);
-                }
-            };
-        </script>
-    @endif
+    <!-- CTA Section -->
+    <section class="px-4 py-20 bg-gradient-to-r from-blue-600 to-purple-600">
+        <div class="max-w-4xl mx-auto text-center">
+            <h2 class="mb-6 text-4xl font-bold text-white">Ready to Transform Your Fan Experience?</h2>
+            <p class="mb-8 text-xl text-white/90">Join thousands of cosplayers who've already elevated their fan
+                interactions</p>
+            <a wire:navigate href="{{ route('mainCosplayers') }}"
+                class="inline-block px-8 py-4 text-lg font-semibold text-blue-600 transition-all duration-300 bg-white rounded-full hover:shadow-xl hover:scale-105">
+                Get Started for Free
+            </a>
+        </div>
+    </section>
 </body>
 
 </html>

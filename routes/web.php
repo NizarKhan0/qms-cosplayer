@@ -4,10 +4,10 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\FanController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ManageUserController;
-use App\Http\Middleware\SuperAdminRoleMiddleware;
 
 //Frontend Homepage
 Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::get('/cosqueue', [HomeController::class, 'mainCosplayers'])->name('mainCosplayers');
 Route::get('/cos/{cosplayerSlug}', [FanController::class, 'displayFans'])->name('fans');
 
 Route::middleware(['auth'])->group(function () {

@@ -141,7 +141,7 @@ new class extends Component {
             </div>
 
             <!-- Back Button -->
-            <a wire:navigate href="{{ url('/') }}"
+            <a wire:navigate href="{{ route('mainCosplayers') }}"
                 class="flex items-center px-4 py-2 text-sm font-semibold text-white bg-blue-500 rounded-md hover:bg-blue-700">
                 Back
             </a>
@@ -161,32 +161,8 @@ new class extends Component {
                 </div>
             @endif
 
-            <!-- Queue Information Section -->
-            <div class="flex flex-col p-4 bg-white rounded-lg shadow-md">
-                <h5 class="text-lg font-medium text-gray-700">Current Queue Status</h5>
-                <div class="mt-4">
-                    <p class="text-gray-600">
-                        <strong>Current Total Queue Numbers:</strong>
-                        <span class="px-3 py-1 text-gray-800 bg-gray-200 rounded-full">{{ $pendingQueue }}</span>
-                    </p>
-                    <p class="mt-3 text-gray-600"><strong>Fans Currently Called In:</strong></p>
-                    <ul class="mt-4 space-y-4">
-                        @forelse ($callInQueue as $queue)
-                            <li
-                                class="flex flex-col items-center p-4 rounded-lg shadow-sm bg-gradient-to-r from-blue-50 to-blue-100">
-                                <span class="text-lg font-semibold text-gray-700">Queue
-                                    #{{ $queue->queue_number }}</span>
-                                <span class="text-gray-600">Name: {{ $queue->fan->name }}</span>
-                            </li>
-                        @empty
-                            <li class="p-4 text-gray-600 rounded-lg bg-gray-50">No fans in the call-in queue yet.</li>
-                        @endforelse
-                    </ul>
-                </div>
-            </div>
-
             <!-- User Queue Information or Registration Form -->
-            <div class="flex flex-col p-4 mt-6 bg-white rounded-lg shadow-md">
+            <div class="flex flex-col p-4 mt-2 bg-white rounded-lg shadow-md">
                 @if ($userQueueInfo)
                     <div class="p-4 text-center bg-teal-100 rounded-lg">
                         <h6 class="mb-4 text-lg font-medium text-teal-800">
@@ -230,6 +206,37 @@ new class extends Component {
                     </form>
                 @endif
             </div>
+
+            <!-- Queue Information Section -->
+            <div class="flex flex-col p-4 mt-6 bg-white rounded-lg shadow-md">
+                <h5 class="text-lg font-medium text-center text-gray-700">Current Queue Status</h5>
+                <div class="mt-4">
+                    <p class="text-gray-600">
+                        <strong>Total Queue Numbers:</strong>
+                        <span class="px-3 py-1 text-gray-800 bg-gray-200 rounded-full">{{ $pendingQueue }}</span>
+                    </p>
+                    <p class="mt-3 text-gray-600"><strong>Fans Currently Called In:</strong></p>
+
+                    <!-- Fans Called In Grid -->
+                    <div class="grid grid-cols-2 gap-4 mt-4 place-items-center sm:grid-cols-2 lg:grid-cols-3">
+                        @forelse ($callInQueue as $queue)
+                            <div
+                                class="flex flex-col items-center p-4 text-center rounded-lg shadow-sm bg-gradient-to-r from-blue-50 to-blue-100">
+                                <span class="text-lg font-semibold text-gray-700">Queue
+                                    #{{ $queue->queue_number }}</span>
+                                <span class="text-gray-600">Name: {{ $queue->fan->name }}</span>
+                            </div>
+                        @empty
+                            <div class="p-4 text-center text-gray-600 rounded-lg bg-gray-50 col-span-full">
+                                No fans in the call-in queue yet.
+                            </div>
+                        @endforelse
+                    </div>
+
+                </div>
+            </div>
+
         </div>
     </div>
 </div>
+

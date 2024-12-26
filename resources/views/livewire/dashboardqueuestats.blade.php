@@ -51,7 +51,7 @@ new class extends Component {
         $this->totalFans = FanQueue::count();
 
         // Get the total number of cosplayers
-        $this->totalCosplayers = Cosplayer::count();
+        $this->totalCosplayers = User::where('role_id', 3)->count();
 
         // Get the total number of users
         $this->totalUsers = User::count();

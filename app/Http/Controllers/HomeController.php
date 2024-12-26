@@ -11,6 +11,10 @@ class HomeController extends Controller
 {
     public function index()
     {
+        return view('index');
+    }
+    public function mainCosplayers()
+    {
         // Get cosplayers with role_id = 3
         //relation ni agak pening sebab dia tak amik role_id dari
         //  table user direct dia amik dari cosplayer punya table
@@ -41,7 +45,7 @@ class HomeController extends Controller
         });
         // dd($queueStatuses);
 
-        return view('index', compact('cosplayers', 'queueStatuses'));
+        return view('mainCosplayers', compact('cosplayers', 'queueStatuses'));
     }
 
     // public function index()
