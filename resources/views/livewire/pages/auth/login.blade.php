@@ -11,6 +11,17 @@ new #[Layout('layouts.guest')] class extends Component {
     /**
      * Handle an incoming authentication request.
      */
+
+     public function mount()
+     {
+         // Auto-fill credentials in local environment
+         if(app()->environment('local')){
+            $this->form->fill([
+                'email' => 'admin@demo.com',
+                'password' => 'password',
+            ]);
+        }
+     }
     public function login(): void
     {
         $this->validate();
